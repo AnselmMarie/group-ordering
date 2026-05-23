@@ -7,7 +7,7 @@ import { Header } from "@/ui/components/header";
 import { Page } from "@/ui/layout/page";
 import { Body } from "@/ui/layout/body";
 
-export default async function PageListPage() {
+export default async function ProductListPage() {
   const cartCount = await getCartCount();
 
   return (
