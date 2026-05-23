@@ -9,7 +9,7 @@ interface AddToCartButtonProps {
   productId: string;
 }
 
-export function AddToCartButton({ productId }: AddToCartButtonProps) {
+export const AddToCartButton = ({ productId }: AddToCartButtonProps) => {
   const [isPending, startTransition] = useTransition();
 
   return (
@@ -25,4 +25,4 @@ export function AddToCartButton({ productId }: AddToCartButtonProps) {
       {isPending ? "Adding…" : "Add to cart"}
     </Button>
   );
-}
+};

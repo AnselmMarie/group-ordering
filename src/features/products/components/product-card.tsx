@@ -14,7 +14,7 @@ interface ProductCardProps {
   product: Product;
 }
 
-export function ProductCard({ product }: ProductCardProps) {
+export const ProductCard = ({ product }: ProductCardProps) => {
   return (
     <Card className="overflow-hidden pt-0">
       <img
@@ -33,4 +33,4 @@ export function ProductCard({ product }: ProductCardProps) {
       </CardFooter>
     </Card>
   );
-}
+};
