@@ -1,0 +1,56 @@
+import { vi, type Mock } from "vitest";
+
+export interface ChainStub {
+  from: Mock;
+  where: Mock;
+  limit: Mock;
+  set: Mock;
+  values: Mock;
+  returning: Mock;
+  then: (
+    onFulfilled?: ((value: unknown) => unknown) | null,
+    onRejected?: ((reason: unknown) => unknown) | null,
+  ) => Promise<unknown>;
+}
+
+export const createChainStub = (
+  resolved: unknown,
+  rejected?: Error,
+): ChainStub => {
+  const chain = {
+    from: vi.fn(),
+    where: vi.fn(),
+    limit: vi.fn(),
+    set: vi.fn(),
+    values: vi.fn(),
+    returning: vi.fn(),
+    then: (
+      onFulfilled?: ((value: unknown) => unknown) | null,
+      onRejected?: ((reason: unknown) => unknown) | null,
+    ) =>
+      rejected
+        ? Promise.reject(rejected).then(onFulfilled, onRejected)
+        : Promise.resolve(resolved).then(onFulfilled, onRejected),
+  } as ChainStub;
+
+  chain.from.mockReturnValue(chain);
+  chain.where.mockReturnValue(chain);
+  chain.limit.mockReturnValue(chain);
+  chain.set.mockReturnValue(chain);
+  chain.values.mockReturnValue(chain);
+  chain.returning.mockReturnValue(chain);
+
+  return chain;
+};
+
+export interface MockDb {
+  select: Mock;
+  insert: Mock;
+  update: Mock;
+}
+
+export const createMockDb = (): MockDb => ({
+  select: vi.fn(),
+  insert: vi.fn(),
+  update: vi.fn(),
+});

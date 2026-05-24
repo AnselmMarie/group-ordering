@@ -22,6 +22,20 @@
       "when": 1779594670386,
       "tag": "0002_sharp_gladiator",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1779635994526,
+      "tag": "0003_warm_dagger",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1779645793450,
+      "tag": "0004_pink_ego",
+      "breakpoints": true
     }
   ]
 }

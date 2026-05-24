@@ -2,7 +2,7 @@
 
 import { useTransition } from "react";
 
-import { addToCart } from "@/server/cart/actions";
+import { addToCart } from "@/server/cart/actions/add-to-cart";
 import { Button } from "@/ui/shadcn/button";
 
 interface AddToCartButtonProps {

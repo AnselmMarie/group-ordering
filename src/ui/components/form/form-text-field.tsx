@@ -38,10 +38,10 @@ export const FormTextField = ({
         id={inputId}
         name={field.name}
         value={field.state.value ?? ""}
-        onChange={(event) => field.handleChange(event.target.value)}
-        onBlur={field.handleBlur}
         aria-invalid={hasError || undefined}
         aria-describedby={hasError ? errorId : undefined}
+        onBlur={field.handleBlur}
+        onChange={(event) => field.handleChange(event.target.value)}
       />
       {hasError && (
         <p id={errorId} className="text-xs text-destructive">
