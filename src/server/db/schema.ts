@@ -1,9 +1,13 @@
+import { sql } from "drizzle-orm";
 import {
   boolean,
+  check,
   integer,
   pgTable,
   primaryKey,
+  smallint,
   text,
+  unique,
   uuid,
 } from "drizzle-orm/pg-core";
 
@@ -91,6 +95,31 @@ export const orderParticipant = pgTable(
     joinedAt: ts("joined_at").notNull().defaultNow(),
   },
   (table) => [primaryKey({ columns: [table.orderId, table.userId] })],
+);
+
+export const orderInvitation = pgTable(
+  "order_invitation",
+  {
+    id: pk(),
+    orderId: uuid("order_id")
+      .notNull()
+      .references(() => order.id, { onDelete: "cascade" }),
+    invitedEmail: text("invited_email").notNull(),
+    token: text("token").notNull().unique(),
+    acceptedByUserId: uuid("accepted_by_user_id").references(() => user.id, {
+      onDelete: "set null",
+    }),
+    slot: smallint("slot").notNull(),
+    createdAt: ts("created_at").notNull().defaultNow(),
+  },
+  (table) => [
+    unique("order_invitation_order_slot_unique").on(table.orderId, table.slot),
+    unique("order_invitation_order_email_unique").on(
+      table.orderId,
+      table.invitedEmail,
+    ),
+    check("order_invitation_slot_range", sql`${table.slot} BETWEEN 1 AND 3`),
+  ],
 );
 
 export const orderItem = pgTable("order_item", {
