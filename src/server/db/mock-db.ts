@@ -4,26 +4,30 @@ export interface ChainStub {
   from: Mock;
   where: Mock;
   limit: Mock;
+  orderBy: Mock;
   set: Mock;
   values: Mock;
   returning: Mock;
+  innerJoin: Mock;
   then: (
     onFulfilled?: ((value: unknown) => unknown) | null,
     onRejected?: ((reason: unknown) => unknown) | null,
   ) => Promise<unknown>;
 }
 
-export const createChainStub = (
+export const createChainStub = <T = ChainStub>(
   resolved: unknown,
   rejected?: Error,
-): ChainStub => {
+): T => {
   const chain = {
     from: vi.fn(),
     where: vi.fn(),
     limit: vi.fn(),
+    orderBy: vi.fn(),
     set: vi.fn(),
     values: vi.fn(),
     returning: vi.fn(),
+    innerJoin: vi.fn(),
     then: (
       onFulfilled?: ((value: unknown) => unknown) | null,
       onRejected?: ((reason: unknown) => unknown) | null,
@@ -36,11 +40,13 @@ export const createChainStub = (
   chain.from.mockReturnValue(chain);
   chain.where.mockReturnValue(chain);
   chain.limit.mockReturnValue(chain);
+  chain.orderBy.mockReturnValue(chain);
   chain.set.mockReturnValue(chain);
   chain.values.mockReturnValue(chain);
   chain.returning.mockReturnValue(chain);
+  chain.innerJoin.mockReturnValue(chain);
 
-  return chain;
+  return chain as unknown as T;
 };
 
 export interface MockDb {

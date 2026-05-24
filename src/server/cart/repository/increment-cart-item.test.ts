@@ -6,7 +6,7 @@ import {
   MOCK_PRODUCT_ID,
   MOCK_USER_ID,
 } from "@/server/cart/mock-data/ids";
-import { createChainStub } from "@/server/cart/mock-data/mock-db";
+import { createChainStub } from "@/server/db/mock-db";
 
 import { incrementCartItem } from "./increment-cart-item";
 
@@ -29,7 +29,7 @@ describe("incrementCartItem", () => {
 
   it("issues an update on cart_item", async () => {
     const chain = createChainStub([]);
-    mockedDb.update.mockReturnValue(chain);
+    mockedDb.update.mockReturnValue(chain as never);
 
     await incrementCartItem(params);
 
@@ -39,14 +39,14 @@ describe("incrementCartItem", () => {
   });
 
   it("resolves to undefined on success", async () => {
-    mockedDb.update.mockReturnValue(createChainStub([]));
+    mockedDb.update.mockReturnValue(createChainStub([]) as never);
 
     await expect(incrementCartItem(params)).resolves.toBeUndefined();
   });
 
   it("propagates database errors", async () => {
     const dbError = new Error("update failed");
-    mockedDb.update.mockReturnValue(createChainStub(null, dbError));
+    mockedDb.update.mockReturnValue(createChainStub(null, dbError) as never);
 
     await expect(incrementCartItem(params)).rejects.toThrow("update failed");
   });

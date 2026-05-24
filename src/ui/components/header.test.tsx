@@ -5,7 +5,7 @@ import { Header } from "./header";
 
 describe("Header", () => {
   it("renders the brand text", () => {
-    render(<Header groupOrder={<div />} cart={<div />} />);
+    render(<Header groupOrder={<div />} miniCart={<div />} />);
     expect(screen.getByText("GroupOrder")).toBeInTheDocument();
   });
 
@@ -13,24 +13,24 @@ describe("Header", () => {
     render(
       <Header
         groupOrder={<div data-testid="group-order-slot" />}
-        cart={<div />}
+        miniCart={<div />}
       />,
     );
     expect(screen.getByTestId("group-order-slot")).toBeInTheDocument();
   });
 
-  it("renders the cart slot", () => {
+  it("renders the miniCart slot", () => {
     render(
       <Header
         groupOrder={<div />}
-        cart={<div data-testid="cart-slot" />}
+        miniCart={<div data-testid="mini-cart-slot" />}
       />,
     );
-    expect(screen.getByTestId("cart-slot")).toBeInTheDocument();
+    expect(screen.getByTestId("mini-cart-slot")).toBeInTheDocument();
   });
 
   it("renders a <header> landmark", () => {
-    render(<Header groupOrder={<div />} cart={<div />} />);
+    render(<Header groupOrder={<div />} miniCart={<div />} />);
     expect(screen.getByRole("banner")).toBeInTheDocument();
   });
 });

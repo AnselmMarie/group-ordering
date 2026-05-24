@@ -1,14 +1,11 @@
 "use server";
 
-import { headers } from "next/headers";
-
-import { auth } from "@/server/auth";
 import { countCartItems } from "@/server/cart/repository/count-cart-items";
 import { findCartIdByUserId } from "@/server/cart/repository/find-cart-id-by-user";
+import { getCurrentUserId } from "@/server/auth/get-current-user-id";
 
 export const getCartCount = async (): Promise<number> => {
-  const session = await auth.api.getSession({ headers: await headers() });
-  const userId = session?.user.id;
+  const userId = await getCurrentUserId();
 
   if (!userId) {
     return 0;

@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { db } from "@/server/db";
 import { MOCK_CART_ID } from "@/server/cart/mock-data/ids";
-import { createChainStub } from "@/server/cart/mock-data/mock-db";
+import { createChainStub } from "@/server/db/mock-db";
 
 import { countCartItems } from "./count-cart-items";
 

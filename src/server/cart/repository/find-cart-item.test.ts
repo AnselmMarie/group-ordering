@@ -7,7 +7,7 @@ import {
   MOCK_PRODUCT_ID,
   MOCK_USER_ID,
 } from "@/server/cart/mock-data/ids";
-import { createChainStub } from "@/server/cart/mock-data/mock-db";
+import { createChainStub } from "@/server/db/mock-db";
 
 import { findCartItem } from "./find-cart-item";
 

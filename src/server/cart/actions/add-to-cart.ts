@@ -1,18 +1,16 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { headers } from "next/headers";
 
-import { auth } from "@/server/auth";
 import { createCart } from "@/server/cart/repository/create-cart";
 import { findCartIdByUserId } from "@/server/cart/repository/find-cart-id-by-user";
 import { findCartItem } from "@/server/cart/repository/find-cart-item";
 import { incrementCartItem } from "@/server/cart/repository/increment-cart-item";
 import { insertCartItem } from "@/server/cart/repository/insert-cart-item";
+import { getCurrentUserId } from "@/server/auth/get-current-user-id";
 
 export const addToCart = async (productId: string): Promise<void> => {
-  const session = await auth.api.getSession({ headers: await headers() });
-  const userId = session?.user.id;
+  const userId = await getCurrentUserId();
 
   if (!userId) {
     throw new Error("User is not found");

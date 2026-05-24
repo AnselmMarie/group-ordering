@@ -1,6 +1,7 @@
 import { getCartCount } from "@/server/cart/actions/get-cart-count";
-import { findAll as findAllProducts } from "@/server/product/repository";
-import { Cart } from "@/features/cart/components/cart";
+import { productFindAll } from "@/server/product/repository/product-find-all";
+import { MiniCart } from "@/features/cart/components/mini-cart";
+import { MiniCartSummary } from "@/features/cart/components/mini-cart-summary";
 import { GroupOrder } from "@/features/invitations/components/group-order";
 import { ProductCard } from "@/features/products/components/product-card";
 import { Header } from "@/ui/components/header";
@@ -10,14 +11,16 @@ import { Body } from "@/ui/components/layout/body";
 export default async function ProductListPage() {
   const [cartCount, products] = await Promise.all([
     getCartCount(),
-    findAllProducts(),
+    productFindAll(),
   ]);
 
   return (
     <Page>
       <Header
         groupOrder={<GroupOrder />}
-        cart={<Cart initialCount={cartCount} />}
+        miniCart={
+          <MiniCart initialCount={cartCount} summary={<MiniCartSummary />} />
+        }
       />
 
       <Body>

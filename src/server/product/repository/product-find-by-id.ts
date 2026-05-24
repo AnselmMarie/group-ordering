@@ -3,13 +3,9 @@ import { eq } from "drizzle-orm";
 import { db } from "@/server/db";
 import { product } from "@/server/db/schema";
 
-import type { Product } from "./types";
+import type { Product } from "../types";
 
-export const findAll = async (): Promise<Product[]> => {
-  return db.select().from(product).orderBy(product.createdAt);
-};
-
-export const findById = async (id: string): Promise<Product | null> => {
+export const productFindById = async (id: string): Promise<Product | null> => {
   const rows = await db
     .select()
     .from(product)
