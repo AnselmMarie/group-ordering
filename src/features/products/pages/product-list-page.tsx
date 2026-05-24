@@ -1,11 +1,11 @@
-import { getCartCount } from "@/server/cart/actions";
+import { getCartCount } from "@/server/cart/actions/get-cart-count";
 import { findAll as findAllProducts } from "@/server/product/repository";
 import { Cart } from "@/features/cart/components/cart";
 import { GroupOrder } from "@/features/invitations/components/group-order";
 import { ProductCard } from "@/features/products/components/product-card";
 import { Header } from "@/ui/components/header";
-import { Page } from "@/ui/layout/page";
-import { Body } from "@/ui/layout/body";
+import { Page } from "@/ui/components/layout/page";
+import { Body } from "@/ui/components/layout/body";
 
 export default async function ProductListPage() {
   const [cartCount, products] = await Promise.all([

@@ -5,7 +5,6 @@ import {
   integer,
   pgTable,
   primaryKey,
-  smallint,
   text,
   unique,
   uuid,
@@ -73,7 +72,7 @@ export const product = pgTable("product", {
   updatedAt: ts("updated_at").notNull().defaultNow(),
 });
 
-export const order = pgTable("order", {
+export const cart = pgTable("cart", {
   id: pk(),
   hostUserId: uuid("host_user_id")
     .notNull()
@@ -83,50 +82,52 @@ export const order = pgTable("order", {
   updatedAt: ts("updated_at").notNull().defaultNow(),
 });
 
-export const orderParticipant = pgTable(
-  "order_participant",
+export const cartParticipant = pgTable(
+  "cart_participant",
   {
-    orderId: uuid("order_id")
+    cartId: uuid("cart_id")
       .notNull()
-      .references(() => order.id, { onDelete: "cascade" }),
+      .references(() => cart.id, { onDelete: "cascade" }),
     userId: uuid("user_id")
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
     joinedAt: ts("joined_at").notNull().defaultNow(),
   },
-  (table) => [primaryKey({ columns: [table.orderId, table.userId] })],
+  (table) => [primaryKey({ columns: [table.cartId, table.userId] })],
 );
 
-export const orderInvitation = pgTable(
-  "order_invitation",
+export const cartInvitation = pgTable(
+  "cart_invitation",
   {
     id: pk(),
-    orderId: uuid("order_id")
+    cartId: uuid("cart_id")
       .notNull()
-      .references(() => order.id, { onDelete: "cascade" }),
+      .references(() => cart.id, { onDelete: "cascade" }),
     invitedEmail: text("invited_email").notNull(),
-    token: text("token").notNull().unique(),
+    status: text("status").notNull().default("pending"),
     acceptedByUserId: uuid("accepted_by_user_id").references(() => user.id, {
       onDelete: "set null",
     }),
-    slot: smallint("slot").notNull(),
     createdAt: ts("created_at").notNull().defaultNow(),
+    updatedAt: ts("updated_at").notNull().defaultNow(),
   },
   (table) => [
-    unique("order_invitation_order_slot_unique").on(table.orderId, table.slot),
-    unique("order_invitation_order_email_unique").on(
-      table.orderId,
+    unique("cart_invitation_cart_email_unique").on(
+      table.cartId,
       table.invitedEmail,
     ),
-    check("order_invitation_slot_range", sql`${table.slot} BETWEEN 1 AND 3`),
+    check(
+      "cart_invitation_status_check",
+      sql`${table.status} IN ('pending','accepted','rejected')`,
+    ),
   ],
 );
 
-export const orderItem = pgTable("order_item", {
+export const cartItem = pgTable("cart_item", {
   id: pk(),
-  orderId: uuid("order_id")
+  cartId: uuid("cart_id")
     .notNull()
-    .references(() => order.id, { onDelete: "cascade" }),
+    .references(() => cart.id, { onDelete: "cascade" }),
   productId: uuid("product_id")
     .notNull()
     .references(() => product.id, { onDelete: "restrict" }),
