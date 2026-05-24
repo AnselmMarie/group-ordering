@@ -7,8 +7,7 @@ import {
 } from "@/ui/shadcn/card";
 
 import { AddToCartButton } from "@/features/cart/components/add-to-cart-button";
-
-import type { Product } from "../data/product-data";
+import type { Product } from "@/server/product/types";
 
 interface ProductCardProps {
   product: Product;
@@ -17,16 +16,20 @@ interface ProductCardProps {
 export const ProductCard = ({ product }: ProductCardProps) => {
   return (
     <Card className="overflow-hidden pt-0">
-      <img
-        src={product.image}
-        alt={product.title}
-        className="h-48 w-full object-cover"
-      />
+      {product.image ? (
+        <img
+          src={product.image}
+          alt={product.title}
+          className="h-48 w-full object-cover"
+        />
+      ) : null}
       <CardHeader>
         <CardTitle>{product.title}</CardTitle>
       </CardHeader>
       <CardContent>
-        <p className="text-lg font-semibold">${product.price.toFixed(2)}</p>
+        <p className="text-lg font-semibold">
+          ${Number(product.price).toFixed(2)}
+        </p>
       </CardContent>
       <CardFooter>
         <AddToCartButton productId={product.id} />
