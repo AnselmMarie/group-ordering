@@ -3,13 +3,11 @@ import { drizzle as drizzleNeon } from "drizzle-orm/neon-http";
 import { drizzle as drizzlePg } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 
+import { getDatabaseUrl } from "@/lib/env";
+
 import * as schema from "./schema";
 
-if (!process.env.DATABASE_URL) {
-  throw new Error("DATABASE_URL is not set");
-}
-
-const url = process.env.DATABASE_URL;
+const url = getDatabaseUrl();
 const isNeon = /\.neon\.(tech|build)/i.test(url);
 
 export const db = isNeon
