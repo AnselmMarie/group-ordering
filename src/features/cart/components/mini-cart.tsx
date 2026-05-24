@@ -1,16 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import { ShoppingCart, Users } from "lucide-react";
+import { ShoppingCart } from "lucide-react";
 
 import { Button } from "@/ui/shadcn/button";
 import { SheetDialog } from "@/ui/components/sheet-dialog";
 
-interface CartProps {
+interface MiniCartProps {
   initialCount: number;
+  summary: React.ReactNode;
 }
 
-export const Cart = ({ initialCount }: CartProps) => {
+export const MiniCart = ({ initialCount, summary }: MiniCartProps) => {
   const [open, setOpen] = useState(false);
 
   return (
@@ -38,7 +39,9 @@ export const Cart = ({ initialCount }: CartProps) => {
         description="Cart details will appear here."
         isOpen={open}
         onOpenChange={setOpen}
-      />
+      >
+        {summary}
+      </SheetDialog>
     </>
   );
 };

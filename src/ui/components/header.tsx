@@ -1,9 +1,9 @@
 interface HeaderProps {
   groupOrder: React.ReactNode;
-  cart: React.ReactNode;
+  miniCart: React.ReactNode;
 }
 
-export const Header = ({ groupOrder, cart }: HeaderProps) => {
+export const Header = ({ groupOrder, miniCart }: HeaderProps) => {
   return (
     <header className="sticky top-0 z-10 flex items-center justify-between border-b border-zinc-200 bg-white px-6 py-4 dark:border-zinc-800 dark:bg-zinc-950">
       <div className="flex items-center gap-2">
@@ -15,7 +15,7 @@ export const Header = ({ groupOrder, cart }: HeaderProps) => {
 
       <div className="flex items-center gap-2">
         {groupOrder}
-        {cart}
+        {miniCart}
       </div>
     </header>
   );

@@ -6,7 +6,7 @@ import {
   MOCK_PRODUCT_ID,
   MOCK_USER_ID,
 } from "@/server/cart/mock-data/ids";
-import { createChainStub } from "@/server/cart/mock-data/mock-db";
+import { createChainStub } from "@/server/db/mock-db";
 
 import { insertCartItem } from "./insert-cart-item";
 
@@ -30,7 +30,7 @@ describe("insertCartItem", () => {
 
   it("inserts with default quantity of 1", async () => {
     const chain = createChainStub([]);
-    mockedDb.insert.mockReturnValue(chain);
+    mockedDb.insert.mockReturnValue(chain as never);
 
     await insertCartItem(baseParams);
 
@@ -46,7 +46,7 @@ describe("insertCartItem", () => {
 
   it("respects an explicit quantity override", async () => {
     const chain = createChainStub([]);
-    mockedDb.insert.mockReturnValue(chain);
+    mockedDb.insert.mockReturnValue(chain as never);
 
     await insertCartItem({ ...baseParams, quantity: 3 });
 
@@ -57,7 +57,7 @@ describe("insertCartItem", () => {
 
   it("propagates database errors", async () => {
     const dbError = new Error("insert failed");
-    mockedDb.insert.mockReturnValue(createChainStub(null, dbError));
+    mockedDb.insert.mockReturnValue(createChainStub(null, dbError) as never);
 
     await expect(insertCartItem(baseParams)).rejects.toThrow("insert failed");
   });
