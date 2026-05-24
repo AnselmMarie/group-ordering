@@ -1,10 +1,16 @@
-import { boolean, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import {
+  boolean,
+  integer,
+  pgTable,
+  primaryKey,
+  text,
+  uuid,
+} from "drizzle-orm/pg-core";
 
-const ts = (name: string) =>
-  timestamp(name, { precision: 3, withTimezone: true, mode: "date" });
+import { pk, ts, money } from "./db-utils";
 
 export const user = pgTable("user", {
-  id: uuid("id").primaryKey(),
+  id: pk(),
   name: text("name"),
   email: text("email").notNull().unique(),
   emailVerified: boolean("email_verified").notNull().default(false),
@@ -15,7 +21,7 @@ export const user = pgTable("user", {
 });
 
 export const session = pgTable("session", {
-  id: uuid("id").primaryKey(),
+  id: pk(),
   userId: uuid("user_id")
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
@@ -28,7 +34,7 @@ export const session = pgTable("session", {
 });
 
 export const account = pgTable("account", {
-  id: uuid("id").primaryKey(),
+  id: pk(),
   userId: uuid("user_id")
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
@@ -46,10 +52,60 @@ export const account = pgTable("account", {
 });
 
 export const verification = pgTable("verification", {
-  id: uuid("id").primaryKey(),
+  id: pk(),
   identifier: text("identifier").notNull(),
   value: text("value").notNull(),
   expiresAt: ts("expires_at").notNull(),
+  createdAt: ts("created_at").notNull().defaultNow(),
+  updatedAt: ts("updated_at").notNull().defaultNow(),
+});
+
+export const product = pgTable("product", {
+  id: pk(),
+  title: text("title").notNull(),
+  price: money("price").notNull(),
+  image: text("image"),
+  createdAt: ts("created_at").notNull().defaultNow(),
+  updatedAt: ts("updated_at").notNull().defaultNow(),
+});
+
+export const order = pgTable("order", {
+  id: pk(),
+  hostUserId: uuid("host_user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  status: text("status").notNull().default("open"),
+  createdAt: ts("created_at").notNull().defaultNow(),
+  updatedAt: ts("updated_at").notNull().defaultNow(),
+});
+
+export const orderParticipant = pgTable(
+  "order_participant",
+  {
+    orderId: uuid("order_id")
+      .notNull()
+      .references(() => order.id, { onDelete: "cascade" }),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    joinedAt: ts("joined_at").notNull().defaultNow(),
+  },
+  (table) => [primaryKey({ columns: [table.orderId, table.userId] })],
+);
+
+export const orderItem = pgTable("order_item", {
+  id: pk(),
+  orderId: uuid("order_id")
+    .notNull()
+    .references(() => order.id, { onDelete: "cascade" }),
+  productId: uuid("product_id")
+    .notNull()
+    .references(() => product.id, { onDelete: "restrict" }),
+  userId: uuid("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  quantity: integer("quantity").notNull().default(1),
+  price: money("price").notNull(),
   createdAt: ts("created_at").notNull().defaultNow(),
   updatedAt: ts("updated_at").notNull().defaultNow(),
 });
