@@ -7,16 +7,17 @@ import { Button } from "@/ui/shadcn/button";
 import { SheetDialog } from "@/ui/components/sheet-dialog";
 import { useAppForm } from "@/ui/components/form/use-app-form";
 import { createInvitationSchema } from "@/features/invitations/schema";
+import { createInvitation } from "@/server/invitations/action";
 
 export const GroupOrder = () => {
   const [open, setOpen] = useState(false);
   const form = useAppForm({
-    defaultValues: { email: "" },
+    defaultValues: { name: "", email: "" },
     validators: {
       onChange: createInvitationSchema,
     },
     onSubmit: async ({ value }) => {
-      /* server action */
+      await createInvitation(value);
     },
   });
 
@@ -39,6 +40,9 @@ export const GroupOrder = () => {
             form.handleSubmit();
           }}
         >
+          <form.AppField name="name">
+            {(f) => <f.TextField label="Your Name" />}
+          </form.AppField>
           <form.AppField name="email">
             {(f) => <f.TextField label="Email" />}
           </form.AppField>
