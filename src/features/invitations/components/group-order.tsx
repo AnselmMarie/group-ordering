@@ -9,7 +9,11 @@ import { useAppForm } from "@/ui/components/form/use-app-form";
 import { createInvitationSchema } from "@/features/invitations/schema";
 import { createInvitation } from "@/server/invitations/actions/create-invitation";
 
-export const GroupOrder = () => {
+export const GroupOrder = ({
+  inviteStatus,
+}: {
+  inviteStatus: React.ReactNode;
+}) => {
   const [open, setOpen] = useState(false);
   const form = useAppForm({
     defaultValues: { name: "", email: "" },
@@ -50,6 +54,8 @@ export const GroupOrder = () => {
             <form.SubmitButton>Create Invite</form.SubmitButton>
           </form.AppForm>
         </form>
+
+        {inviteStatus}
       </SheetDialog>
     </>
   );

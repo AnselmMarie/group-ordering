@@ -2,19 +2,19 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { MOCK_INVITATION_ID } from "@/server/invitations/mock-data/ids";
 import { buildMockInvitation } from "@/server/invitations/mock-data/mock-invitation";
-import { findInvitationById } from "@/server/invitations/repository/find-invitation-by-id";
+import { getInvitationById } from "@/server/invitations/repository/get-invitation-by-id";
 import { updateInvitationStatus } from "@/server/invitations/repository/update-invitation-status";
 
 import { rejectInvitation } from "./reject-invitation";
 
-vi.mock("@/server/invitations/repository/find-invitation-by-id", () => ({
-  findInvitationById: vi.fn(),
+vi.mock("@/server/invitations/repository/get-invitation-by-id", () => ({
+  getInvitationById: vi.fn(),
 }));
 vi.mock("@/server/invitations/repository/update-invitation-status", () => ({
   updateInvitationStatus: vi.fn(),
 }));
 
-const mockedFindById = vi.mocked(findInvitationById);
+const mockedFindById = vi.mocked(getInvitationById);
 const mockedUpdateStatus = vi.mocked(updateInvitationStatus);
 
 beforeEach(() => {

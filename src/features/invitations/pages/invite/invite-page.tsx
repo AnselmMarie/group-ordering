@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 
 import { InviteActions } from "@/features/invitations/components/invite-actions";
-import { findInvitationById } from "@/server/invitations/repository/find-invitation-by-id";
+import { getInvitationById } from "@/server/invitations/repository/get-invitation-by-id";
 import { Body } from "@/ui/components/layout/body";
 
 interface InvitePageProps {
@@ -21,7 +21,7 @@ const InvitePage = async ({ params, searchParams }: InvitePageProps) => {
   const { id } = await params;
   const { action } = await searchParams;
 
-  const invitation = await findInvitationById(id);
+  const invitation = await getInvitationById(id);
   if (!invitation) {
     notFound();
   }
@@ -31,7 +31,7 @@ const InvitePage = async ({ params, searchParams }: InvitePageProps) => {
       <Body>
         <h1 className="text-2xl font-bold">Invitation {invitation.status}</h1>
         <p className="text-sm text-muted-foreground">
-          This invitation has already been {invitation.status}.
+          This invitation has been {invitation.status}.
         </p>
       </Body>
     );

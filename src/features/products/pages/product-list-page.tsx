@@ -2,6 +2,7 @@ import { getCartCount } from "@/server/cart/actions/get-cart-count";
 import { productFindAll } from "@/server/product/repository/product-find-all";
 import { MiniCart } from "@/features/cart/components/mini-cart";
 import { MiniCartSummary } from "@/features/cart/components/mini-cart-summary";
+import { InvitationStatus } from "@/features/invitations/components/invitation-status";
 import { GroupOrder } from "@/features/invitations/components/group-order";
 import { ProductCard } from "@/features/products/components/product-card";
 import { Header } from "@/ui/components/header";
@@ -17,7 +18,7 @@ export default async function ProductListPage() {
   return (
     <Page>
       <Header
-        groupOrder={<GroupOrder />}
+        groupOrder={<GroupOrder inviteStatus={<InvitationStatus />} />}
         miniCart={
           <MiniCart initialCount={cartCount} summary={<MiniCartSummary />} />
         }

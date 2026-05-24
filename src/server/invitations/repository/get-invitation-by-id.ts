@@ -4,7 +4,7 @@ import { db } from "@/server/db";
 import { cartInvitation } from "@/server/db/schema";
 import type { Invitation, InvitationStatus } from "@/server/invitations/types";
 
-export const findInvitationById = async (
+export const getInvitationById = async (
   id: string,
 ): Promise<Invitation | null> => {
   const rows = await db
