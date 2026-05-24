@@ -1,7 +1,7 @@
 import { getCartCount } from "@/server/cart/actions";
 import { findAll as findAllProducts } from "@/server/product/repository";
 import { Cart } from "@/features/cart/components/cart";
-import { GroupOrder } from "@/features/cart/components/group-order";
+import { GroupOrder } from "@/features/invitations/components/group-order";
 import { ProductCard } from "@/features/products/components/product-card";
 import { Header } from "@/ui/components/header";
 import { Page } from "@/ui/layout/page";

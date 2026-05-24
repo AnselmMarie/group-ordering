@@ -15,6 +15,13 @@
       "when": 1779585708979,
       "tag": "0001_lowly_bedlam",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1779594670386,
+      "tag": "0002_sharp_gladiator",
+      "breakpoints": true
     }
   ]
 }
