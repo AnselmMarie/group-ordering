@@ -1,8 +1,7 @@
 import type { ReactElement } from "react";
 
+import { getEmailNotificationsAddress } from "@/lib/env";
 import { getResend } from "@/server/email/resend-client";
-
-const FROM_ADDRESS = "onboarding@resend.dev";
 
 interface SendEmailProps {
   to: string;
@@ -19,9 +18,17 @@ export const sendEmail = async ({
   subject,
   react,
 }: SendEmailProps): Promise<SendEmailResult> => {
+  const from = getEmailNotificationsAddress();
+  if (!from) {
+    console.error(
+      "sendEmail - EMAIL_ADDRESS_NOTIFICATIONS is not set, skipping send",
+    );
+    return { ok: false };
+  }
+
   try {
     const response = await getResend().emails.send({
-      from: FROM_ADDRESS,
+      from,
       to,
       subject,
       react,
