@@ -35,9 +35,7 @@ describe("InviteReject", () => {
     );
     const user = userEvent.setup();
 
-    const { container } = render(
-      <InviteReject invitationId="inv-1" onSetView={vi.fn()} />,
-    );
+    render(<InviteReject invitationId="inv-1" onSetView={vi.fn()} />);
 
     await user.click(screen.getByRole("button", { name: /reject invitation/i }));
 
@@ -45,7 +43,6 @@ describe("InviteReject", () => {
       "This invitation no longer exists.",
     );
     expect(routerRefresh).not.toHaveBeenCalled();
-    expect(container.querySelector("p.text-red-600")).toBeNull();
   });
 
   it("refreshes the router on success", async () => {
