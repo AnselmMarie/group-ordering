@@ -16,8 +16,13 @@ export const InvitationStatus = async () => {
   return (
     <div className="flex flex-col gap-4">
       <div className="space-y-4">
-        {inviteStatus.map((invite) => (
-          <InvitationStatusItem key={invite.id} {...invite} />
+        {inviteStatus.map((invite, idx) => (
+          <InvitationStatusItem
+            key={invite.id}
+            idx={idx}
+            arrLength={inviteStatus.length}
+            {...invite}
+          />
         ))}
       </div>
     </div>

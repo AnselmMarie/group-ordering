@@ -24,12 +24,15 @@ export const SheetDialog = ({
   return (
     <Sheet open={isOpen} onOpenChange={onOpenChange}>
       <SheetContent side="right">
-        <SheetHeader>
+        <SheetHeader />
+        <div className="flex flex-col gap-1 px-4 mb-4">
           <SheetTitle>{title}</SheetTitle>
           <SheetDescription>{description}</SheetDescription>
-        </SheetHeader>
+        </div>
         <div className="flex-1 min-h-0 text-sm text-muted-foreground">
-          <ScrollArea className="h-full px-4">{children}</ScrollArea>
+          <ScrollArea className="h-full">
+            <div className=" px-4">{children}</div>
+          </ScrollArea>
         </div>
       </SheetContent>
     </Sheet>

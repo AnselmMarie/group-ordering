@@ -1,3 +1,4 @@
+import { Separator } from "@/ui/shadcn/separator";
 import type { InvitationItem } from "@/server/invitations/repository/get-invitations-by-cart-id";
 import type { InvitationStatus } from "@/server/invitations/types";
 
@@ -15,16 +16,23 @@ const STATUS_STYLES: Record<InvitationStatus, string> = {
   rejected: "bg-rose-100 text-rose-800 dark:bg-rose-900/30 dark:text-rose-200",
 };
 
-export const InvitationStatusItem = (item: InvitationItem) => {
+export const InvitationStatusItem = ({
+  idx,
+  arrLength,
+  ...item
+}: InvitationItem & { idx: number; arrLength: number }) => {
   return (
-    <div className="flex items-center justify-between gap-3">
-      <p className="font-medium">{item.invitedEmail}</p>
+    <div>
+      <div className="flex items-center justify-between gap-3">
+        <p className="font-medium">{item.invitedEmail}</p>
 
-      <span
-        className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${STATUS_STYLES[item.status]}`}
-      >
-        {STATUS_LABELS[item.status]}
-      </span>
+        <span
+          className={`rounded-full px-2.5 py-1 text-xs font-medium ${STATUS_STYLES[item.status]}`}
+        >
+          {STATUS_LABELS[item.status]}
+        </span>
+      </div>
+      {idx < arrLength - 1 && <Separator className="my-4" />}
     </div>
   );
 };
