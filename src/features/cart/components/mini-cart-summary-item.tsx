@@ -1,4 +1,4 @@
-import { CartSummaryItem } from "@/server/cart/repository/get-cart-summary";
+import { CartSummaryItem } from "@/server/cart/repository/get-cart-summary-view";
 import { formatUSD } from "@/lib/money";
 
 export const MiniCartSummaryItem = (item: CartSummaryItem) => {

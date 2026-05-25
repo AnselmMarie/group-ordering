@@ -1,5 +1,4 @@
 import { getActiveCartRole } from "@/server/cart/repository/get-active-cart-role";
-import type { CartSummaryItem } from "@/server/cart/repository/get-cart-summary";
 import { getCartSummaryEditor } from "@/server/cart/repository/get-cart-summary-editor";
 import { getCartSummaryOwner } from "@/server/cart/repository/get-cart-summary-owner";
 import type { CartParticipantRole } from "@/server/cart/types";
@@ -10,6 +9,20 @@ export interface CartParticipantGroup {
   role: CartParticipantRole;
   items: CartSummaryItem[];
   subtotal: number;
+}
+
+export interface CartSummaryItem {
+  id: string;
+  productId: string;
+  userId: string;
+  quantity: number;
+  price: number;
+  product: {
+    id: string;
+    title: string;
+    price: number;
+    image: string | null;
+  };
 }
 
 export type CartSummaryView =

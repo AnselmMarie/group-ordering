@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 
 import { MiniCartSummaryGroup } from "./mini-cart-summary-group";
 
-import type { CartSummaryItem } from "@/server/cart/repository/get-cart-summary";
+import type { CartSummaryItem } from "@/server/cart/repository/get-cart-summary-view";
 
 const buildItem = (
   overrides: Partial<{

@@ -8,8 +8,7 @@ export const InvitationStatus = async () => {
   if (!inviteStatus || inviteStatus.length === 0) {
     return (
       <p className="text-sm text-zinc-500 dark:text-zinc-400">
-        You didn't invite anyone yet. Start by inviting your friends to join the
-        group order!
+        You didn't invite anyone yet.
       </p>
     );
   }
