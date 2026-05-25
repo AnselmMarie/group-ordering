@@ -14,14 +14,14 @@ export const addToCart = async (productId: string): Promise<void> => {
   const userId = await getCurrentUserId();
 
   if (!userId) {
-    throw new Error("User is not found");
+    throw new Error("We couldn't load your session. Please refresh and try again.");
   }
 
   const existingCartId = await findActiveCartIdByUser(userId);
   const cartId = existingCartId ?? (await createCart(userId));
 
   if (!cartId) {
-    throw new Error("Failed to get or create cart");
+    throw new Error("We couldn't open your cart. Please try again.");
   }
 
   const existingItem = await findCartItem({ cartId, productId, userId });
@@ -32,7 +32,7 @@ export const addToCart = async (productId: string): Promise<void> => {
     const product = await productFindById(productId);
 
     if (!product) {
-      throw new Error("Product not found");
+      throw new Error("This product is no longer available.");
     }
 
     await insertCartItem({

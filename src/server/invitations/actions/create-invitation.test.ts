@@ -79,7 +79,7 @@ describe("createInvitation", () => {
     mockedGetCurrentUserId.mockResolvedValue(undefined);
 
     await expect(createInvitation(validInput)).rejects.toThrow(
-      "User is not found",
+      "We couldn't load your session. Please refresh and try again.",
     );
     expect(mockedCreateRow).not.toHaveBeenCalled();
   });
@@ -89,7 +89,7 @@ describe("createInvitation", () => {
     mockedFindActiveCartIdByUser.mockResolvedValue(null);
 
     await expect(createInvitation(validInput)).rejects.toThrow(
-      "Cart is not found",
+      "We couldn't find your cart. Please refresh and try again.",
     );
     expect(mockedCreateRow).not.toHaveBeenCalled();
   });

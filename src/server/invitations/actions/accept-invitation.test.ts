@@ -103,7 +103,7 @@ describe("acceptInvitation", () => {
         id: MOCK_INVITATION_ID,
         email: "different@example.com",
       }),
-    ).rejects.toThrow("Email does not match the invitation");
+    ).rejects.toThrow("That email doesn't match this invitation.");
     expect(mockedDb.transaction).not.toHaveBeenCalled();
     expect(mockedUpdateStatus).not.toHaveBeenCalled();
     expect(mockedUpsert).not.toHaveBeenCalled();
@@ -117,7 +117,7 @@ describe("acceptInvitation", () => {
         id: MOCK_INVITATION_ID,
         email: MOCK_INVITED_EMAIL,
       }),
-    ).rejects.toThrow("Invitation not found");
+    ).rejects.toThrow("This invitation no longer exists.");
     expect(mockedDb.transaction).not.toHaveBeenCalled();
   });
 
@@ -131,7 +131,7 @@ describe("acceptInvitation", () => {
         id: MOCK_INVITATION_ID,
         email: MOCK_INVITED_EMAIL,
       }),
-    ).rejects.toThrow("Invitation already accepted");
+    ).rejects.toThrow("This invitation has already been accepted.");
     expect(mockedDb.transaction).not.toHaveBeenCalled();
   });
 
@@ -144,7 +144,7 @@ describe("acceptInvitation", () => {
         id: MOCK_INVITATION_ID,
         email: MOCK_INVITED_EMAIL,
       }),
-    ).rejects.toThrow("Session is not found");
+    ).rejects.toThrow("We couldn't load your session. Please refresh and try again.");
     expect(mockedDb.transaction).not.toHaveBeenCalled();
   });
 

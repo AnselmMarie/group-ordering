@@ -65,7 +65,7 @@ describe("addToCart", () => {
     mockedGetSession.mockResolvedValue(null);
 
     await expect(addToCart(MOCK_PRODUCT_ID)).rejects.toThrow(
-      "User is not found",
+      "We couldn't load your session. Please refresh and try again.",
     );
     expect(mockedFindActiveCartIdByUser).not.toHaveBeenCalled();
     expect(mockedRevalidatePath).not.toHaveBeenCalled();
@@ -97,7 +97,7 @@ describe("addToCart", () => {
     mockedCreateCart.mockResolvedValue(undefined);
 
     await expect(addToCart(MOCK_PRODUCT_ID)).rejects.toThrow(
-      "Failed to get or create cart",
+      "We couldn't open your cart. Please try again.",
     );
     expect(mockedFindCartItem).not.toHaveBeenCalled();
     expect(mockedRevalidatePath).not.toHaveBeenCalled();
@@ -145,7 +145,7 @@ describe("addToCart", () => {
     mockedProductFindById.mockResolvedValue(null);
 
     await expect(addToCart(MOCK_PRODUCT_ID)).rejects.toThrow(
-      "Product not found",
+      "This product is no longer available.",
     );
     expect(mockedInsertCartItem).not.toHaveBeenCalled();
     expect(mockedRevalidatePath).not.toHaveBeenCalled();

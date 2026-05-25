@@ -26,12 +26,12 @@ export async function createInvitation(
 
   const userId = await getCurrentUserId();
   if (!userId) {
-    throw new Error("User is not found");
+    throw new Error("We couldn't load your session. Please refresh and try again.");
   }
 
   const cartId = await findActiveCartIdByUser(userId);
   if (!cartId) {
-    throw new Error("Cart is not found");
+    throw new Error("We couldn't find your cart. Please refresh and try again.");
   }
 
   const invitation = await createInvitationRow({

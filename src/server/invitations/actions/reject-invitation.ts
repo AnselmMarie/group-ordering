@@ -7,11 +7,11 @@ import type { Invitation } from "@/server/invitations/types";
 export async function rejectInvitation(id: string): Promise<Invitation> {
   const invitation = await getInvitationById(id);
   if (!invitation) {
-    throw new Error("Invitation not found");
+    throw new Error("This invitation no longer exists.");
   }
 
   if (invitation.status !== "pending") {
-    throw new Error(`Invitation already ${invitation.status}`);
+    throw new Error(`This invitation has already been ${invitation.status}.`);
   }
 
   await updateInvitationStatus({ id, status: "rejected" });

@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 
+import { useServerAction } from "@/lib/hooks/use-server-action";
 import { Button } from "@/ui/shadcn/button";
 import { Input } from "@/ui/shadcn/input";
 import { acceptInvitation } from "@/server/invitations/actions/accept-invitation";
@@ -20,20 +21,9 @@ export const InviteAccept = ({
 }: InviteActionsProps) => {
   const router = useRouter();
   const [email, setEmail] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [isPending, startTransition] = useTransition();
-
-  const onAccept = () => {
-    setError(null);
-    startTransition(async () => {
-      try {
-        await acceptInvitation({ id: invitationId, email });
-        router.refresh();
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Something went wrong");
-      }
-    });
-  };
+  const [run, isPending] = useServerAction(acceptInvitation, {
+    onSuccess: () => router.refresh(),
+  });
 
   return (
     <div className="flex flex-col gap-3">
@@ -47,9 +37,11 @@ export const InviteAccept = ({
         onChange={(e) => setEmail(e.target.value)}
         disabled={isPending}
       />
-      {error && <p className="text-sm text-red-600">{error}</p>}
       <div className="flex gap-2">
-        <Button disabled={isPending || !email} onClick={onAccept}>
+        <Button
+          disabled={isPending || !email}
+          onClick={() => run({ id: invitationId, email })}
+        >
           {isPending ? "Accepting..." : "Accept invitation"}
         </Button>
         <Button
