@@ -38,7 +38,7 @@ describe("MiniCartSummaryGroup", () => {
       />,
     );
 
-    expect(screen.getByText("Owner")).toBeInTheDocument();
+    expect(screen.getByText("You")).toBeInTheDocument();
     expect(screen.queryByText("owner@example.com")).not.toBeInTheDocument();
   });
 

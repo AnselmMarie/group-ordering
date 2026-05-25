@@ -24,7 +24,7 @@ describe("AddToCartButton", () => {
   });
 
   it("calls addToCart with the productId on click", async () => {
-    addToCartMock.mockResolvedValue(undefined);
+    addToCartMock.mockResolvedValue({ ok: true, data: undefined });
     const user = userEvent.setup();
 
     render(<AddToCartButton productId="prod-1" />);
@@ -35,10 +35,11 @@ describe("AddToCartButton", () => {
     expect(toastError).not.toHaveBeenCalled();
   });
 
-  it("toasts the friendly error message when addToCart rejects", async () => {
-    addToCartMock.mockRejectedValue(
-      new Error("This product is no longer available."),
-    );
+  it("toasts the friendly error message when addToCart returns a failure", async () => {
+    addToCartMock.mockResolvedValue({
+      ok: false,
+      error: "This product is no longer available.",
+    });
     const user = userEvent.setup();
 
     render(<AddToCartButton productId="prod-1" />);

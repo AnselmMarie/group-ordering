@@ -2,6 +2,10 @@
 
 import { revalidatePath } from "next/cache";
 
+import {
+  UserFacingError,
+  withActionResult,
+} from "@/lib/server/action-result";
 import { createCart } from "@/server/cart/repository/create-cart";
 import { getActiveCartIdByUser } from "@/server/cart/repository/get-active-cart-id-by-user";
 import { getCartItem } from "@/server/cart/repository/get-cart-item";
@@ -10,12 +14,12 @@ import { createCartItem } from "@/server/cart/repository/create-cart-item";
 import { getCurrentUserId } from "@/server/auth/get-current-user-id";
 import { getProductById } from "@/server/product/repository/get-product-by-id";
 
-export const addToCart = async (productId: string): Promise<void> => {
+const addToCartImpl = async (productId: string): Promise<void> => {
   const userId = await getCurrentUserId();
 
   if (!userId) {
-    throw new Error(
-      "We couldn't load your session. Please refresh and try again.",
+    throw new UserFacingError(
+      "We couldn't load your session. Please refresh the page. If the issue continues, clear your Better Auth cookies and try again.",
     );
   }
 
@@ -23,7 +27,7 @@ export const addToCart = async (productId: string): Promise<void> => {
   const cartId = existingCartId ?? (await createCart(userId));
 
   if (!cartId) {
-    throw new Error("We couldn't open your cart. Please try again.");
+    throw new UserFacingError("We couldn't open your cart. Please try again.");
   }
 
   const existingItem = await getCartItem({ cartId, productId, userId });
@@ -34,7 +38,7 @@ export const addToCart = async (productId: string): Promise<void> => {
     const product = await getProductById(productId);
 
     if (!product) {
-      throw new Error("This product is no longer available.");
+      throw new UserFacingError("This product is no longer available.");
     }
 
     await createCartItem({
@@ -47,3 +51,5 @@ export const addToCart = async (productId: string): Promise<void> => {
 
   revalidatePath("/");
 };
+
+export const addToCart = withActionResult("addToCart", addToCartImpl);

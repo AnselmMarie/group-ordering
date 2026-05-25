@@ -30,9 +30,10 @@ describe("InviteReject", () => {
   });
 
   it("toasts the friendly error and does not render inline error UI on rejection", async () => {
-    rejectInvitationMock.mockRejectedValue(
-      new Error("This invitation no longer exists."),
-    );
+    rejectInvitationMock.mockResolvedValue({
+      ok: false,
+      error: "This invitation no longer exists.",
+    });
     const user = userEvent.setup();
 
     render(<InviteReject invitationId="inv-1" onSetView={vi.fn()} />);
@@ -46,7 +47,7 @@ describe("InviteReject", () => {
   });
 
   it("refreshes the router on success", async () => {
-    rejectInvitationMock.mockResolvedValue({});
+    rejectInvitationMock.mockResolvedValue({ ok: true, data: {} });
     const user = userEvent.setup();
 
     render(<InviteReject invitationId="inv-1" onSetView={vi.fn()} />);

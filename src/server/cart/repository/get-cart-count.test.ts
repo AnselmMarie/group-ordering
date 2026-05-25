@@ -6,10 +6,10 @@ import { MOCK_CART_ID, MOCK_USER_ID } from "@/server/cart/mock-data/ids";
 
 import { getCartCount } from "./get-cart-count";
 
-vi.mock("@/server/cart/repository/find-active-cart-role", () => ({
+vi.mock("@/server/cart/repository/get-active-cart-role", () => ({
   getActiveCartRole: vi.fn(),
 }));
-vi.mock("@/server/cart/repository/count-cart-items", () => ({
+vi.mock("@/server/cart/repository/get-count-cart-items", () => ({
   getCountCartItems: vi.fn(),
 }));
 

@@ -15,7 +15,7 @@ vi.mock("@/server/db", () => ({
   db: { transaction: vi.fn() },
 }));
 
-vi.mock("./upsert-active-participant", () => ({
+vi.mock("./create-active-participant", () => ({
   createActiveParticipant: vi.fn(),
 }));
 

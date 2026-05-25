@@ -16,7 +16,7 @@ vi.mock("@/server/auth/get-current-user-id", () => ({
   getCurrentUserId: vi.fn(),
 }));
 
-vi.mock("@/server/cart/repository/find-active-cart-id-by-user", () => ({
+vi.mock("@/server/cart/repository/get-active-cart-id-by-user", () => ({
   getActiveCartIdByUser: vi.fn(),
 }));
 

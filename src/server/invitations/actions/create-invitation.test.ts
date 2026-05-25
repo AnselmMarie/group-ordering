@@ -16,7 +16,7 @@ import { createInvitation } from "./create-invitation";
 vi.mock("@/server/auth/get-current-user-id", () => ({
   getCurrentUserId: vi.fn(),
 }));
-vi.mock("@/server/cart/repository/find-active-cart-id-by-user", () => ({
+vi.mock("@/server/cart/repository/get-active-cart-id-by-user", () => ({
   getActiveCartIdByUser: vi.fn(),
 }));
 vi.mock("@/server/email/send-email", () => ({
@@ -51,7 +51,7 @@ describe("createInvitation", () => {
 
     const result = await createInvitation(validInput);
 
-    expect(result).toEqual(invitation);
+    expect(result).toEqual({ ok: true, data: invitation });
     expect(mockedCreateRow).toHaveBeenCalledWith({
       cartId: MOCK_CART_ID,
       email: MOCK_INVITED_EMAIL,
@@ -72,25 +72,32 @@ describe("createInvitation", () => {
 
     const result = await createInvitation(validInput);
 
-    expect(result).toEqual(invitation);
+    expect(result).toEqual({ ok: true, data: invitation });
   });
 
-  it("throws when there is no current user", async () => {
+  it("returns failure when there is no current user", async () => {
     mockedGetCurrentUserId.mockResolvedValue(undefined);
 
-    await expect(createInvitation(validInput)).rejects.toThrow(
-      "We couldn't load your session. Please refresh and try again.",
-    );
+    const result = await createInvitation(validInput);
+
+    expect(result).toEqual({
+      ok: false,
+      error:
+        "We couldn't load your session. Please refresh the page. If the issue continues, clear your Better Auth cookies and try again.",
+    });
     expect(mockedCreateRow).not.toHaveBeenCalled();
   });
 
-  it("throws when the user has no cart", async () => {
+  it("returns failure when the user has no cart", async () => {
     mockedGetCurrentUserId.mockResolvedValue(MOCK_USER_ID);
     mockedgetActiveCartIdByUser.mockResolvedValue(null);
 
-    await expect(createInvitation(validInput)).rejects.toThrow(
-      "We couldn't find your cart. Please refresh and try again.",
-    );
+    const result = await createInvitation(validInput);
+
+    expect(result).toEqual({
+      ok: false,
+      error: "We couldn't find your cart. Please refresh and try again.",
+    });
     expect(mockedCreateRow).not.toHaveBeenCalled();
   });
 
@@ -104,7 +111,7 @@ describe("createInvitation", () => {
 
     const result = await createInvitation(validInput);
 
-    expect(result).toEqual(invitation);
+    expect(result).toEqual({ ok: true, data: invitation });
     expect(mockedSendEmail).not.toHaveBeenCalled();
     errorSpy.mockRestore();
   });

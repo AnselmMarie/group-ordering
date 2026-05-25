@@ -1,5 +1,9 @@
 "use server";
 
+import {
+  UserFacingError,
+  withActionResult,
+} from "@/lib/server/action-result";
 import { getCurrentUserId } from "@/server/auth/get-current-user-id";
 import { createActiveParticipant } from "@/server/cart/repository/create-active-participant";
 import { db } from "@/server/db";
@@ -12,27 +16,29 @@ interface AcceptInvitationInput {
   email: string;
 }
 
-export async function acceptInvitation({
+async function acceptInvitationImpl({
   id,
   email,
 }: AcceptInvitationInput): Promise<Invitation> {
   const invitation = await getInvitationById(id);
   if (!invitation) {
-    throw new Error("This invitation no longer exists.");
+    throw new UserFacingError("This invitation no longer exists.");
   }
 
   if (invitation.status !== "pending") {
-    throw new Error(`This invitation has already been ${invitation.status}.`);
+    throw new UserFacingError(
+      `This invitation has already been ${invitation.status}.`,
+    );
   }
 
   if (invitation.invitedEmail.toLowerCase() !== email.trim().toLowerCase()) {
-    throw new Error("That email doesn't match this invitation.");
+    throw new UserFacingError("That email doesn't match this invitation.");
   }
 
   const userId = await getCurrentUserId();
   if (!userId) {
-    throw new Error(
-      "We couldn't load your session. Please refresh and try again.",
+    throw new UserFacingError(
+      "We couldn't load your session. Please refresh the page. If the issue continues, clear your Better Auth cookies and try again.",
     );
   }
 
@@ -55,3 +61,8 @@ export async function acceptInvitation({
     acceptedByUserId: userId,
   };
 }
+
+export const acceptInvitation = withActionResult(
+  "acceptInvitation",
+  acceptInvitationImpl,
+);

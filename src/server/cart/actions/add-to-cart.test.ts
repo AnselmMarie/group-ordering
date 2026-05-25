@@ -31,19 +31,19 @@ vi.mock("@/server/auth", () => ({
 vi.mock("@/server/cart/repository/create-cart", () => ({
   createCart: vi.fn(),
 }));
-vi.mock("@/server/cart/repository/find-active-cart-id-by-user", () => ({
+vi.mock("@/server/cart/repository/get-active-cart-id-by-user", () => ({
   getActiveCartIdByUser: vi.fn(),
 }));
-vi.mock("@/server/cart/repository/find-cart-item", () => ({
+vi.mock("@/server/cart/repository/get-cart-item", () => ({
   getCartItem: vi.fn(),
 }));
-vi.mock("@/server/cart/repository/increment-cart-item", () => ({
+vi.mock("@/server/cart/repository/update-cart-item", () => ({
   updateCartItem: vi.fn(),
 }));
-vi.mock("@/server/cart/repository/insert-cart-item", () => ({
+vi.mock("@/server/cart/repository/create-cart-item", () => ({
   createCartItem: vi.fn(),
 }));
-vi.mock("@/server/product/repository/product-find-by-id", () => ({
+vi.mock("@/server/product/repository/get-product-by-id", () => ({
   getProductById: vi.fn(),
 }));
 
@@ -61,12 +61,16 @@ describe("addToCart", () => {
     vi.clearAllMocks();
   });
 
-  it("throws when there is no session", async () => {
+  it("returns failure when there is no session", async () => {
     mockedGetSession.mockResolvedValue(null);
 
-    await expect(addToCart(MOCK_PRODUCT_ID)).rejects.toThrow(
-      "We couldn't load your session. Please refresh and try again.",
-    );
+    const result = await addToCart(MOCK_PRODUCT_ID);
+
+    expect(result).toEqual({
+      ok: false,
+      error:
+        "We couldn't load your session. Please refresh the page. If the issue continues, clear your Better Auth cookies and try again.",
+    });
     expect(mockedgetActiveCartIdByUser).not.toHaveBeenCalled();
     expect(mockedRevalidatePath).not.toHaveBeenCalled();
   });
@@ -91,14 +95,17 @@ describe("addToCart", () => {
     expect(mockedRevalidatePath).toHaveBeenCalledWith("/");
   });
 
-  it("throws when cart creation fails", async () => {
+  it("returns failure when cart creation fails", async () => {
     mockedGetSession.mockResolvedValue(createMockSession());
     mockedgetActiveCartIdByUser.mockResolvedValue(null);
     mockedCreateCart.mockResolvedValue(undefined);
 
-    await expect(addToCart(MOCK_PRODUCT_ID)).rejects.toThrow(
-      "We couldn't open your cart. Please try again.",
-    );
+    const result = await addToCart(MOCK_PRODUCT_ID);
+
+    expect(result).toEqual({
+      ok: false,
+      error: "We couldn't open your cart. Please try again.",
+    });
     expect(mockedgetCartItem).not.toHaveBeenCalled();
     expect(mockedRevalidatePath).not.toHaveBeenCalled();
   });
@@ -138,27 +145,32 @@ describe("addToCart", () => {
     expect(mockedRevalidatePath).toHaveBeenCalledWith("/");
   });
 
-  it("throws when the product is not found", async () => {
+  it("returns failure when the product is not found", async () => {
     mockedGetSession.mockResolvedValue(createMockSession());
     mockedgetActiveCartIdByUser.mockResolvedValue(MOCK_CART_ID);
     mockedgetCartItem.mockResolvedValue(null);
     mockedgetProductById.mockResolvedValue(null);
 
-    await expect(addToCart(MOCK_PRODUCT_ID)).rejects.toThrow(
-      "This product is no longer available.",
-    );
+    const result = await addToCart(MOCK_PRODUCT_ID);
+
+    expect(result).toEqual({
+      ok: false,
+      error: "This product is no longer available.",
+    });
     expect(mockedcreateCartItem).not.toHaveBeenCalled();
     expect(mockedRevalidatePath).not.toHaveBeenCalled();
   });
 
-  it("propagates repository errors and skips revalidation", async () => {
+  it("returns failure when a repository call throws and skips revalidation", async () => {
     mockedGetSession.mockResolvedValue(createMockSession());
     mockedgetActiveCartIdByUser.mockResolvedValue(MOCK_CART_ID);
     mockedgetCartItem.mockResolvedValue(null);
     mockedgetProductById.mockResolvedValue(createMockProduct());
     mockedcreateCartItem.mockRejectedValue(new Error("insert failed"));
 
-    await expect(addToCart(MOCK_PRODUCT_ID)).rejects.toThrow("insert failed");
+    const result = await addToCart(MOCK_PRODUCT_ID);
+
+    expect(result).toEqual({ ok: false, error: "Something went wrong" });
     expect(mockedRevalidatePath).not.toHaveBeenCalled();
   });
 });

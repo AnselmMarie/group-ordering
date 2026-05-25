@@ -1,5 +1,3 @@
-"use server";
-
 import { getCountCartItems } from "@/server/cart/repository/get-count-cart-items";
 import { getActiveCartRole } from "@/server/cart/repository/get-active-cart-role";
 

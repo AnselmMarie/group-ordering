@@ -1,5 +1,6 @@
 import { revalidatePath } from "next/cache";
 
+import { UserFacingError } from "@/lib/server/action-result";
 import { db } from "@/server/db";
 import { cartInvitation } from "@/server/db/schema";
 import { MAX_ACTIVE_INVITES } from "@/server/invitations/constants";
@@ -18,7 +19,7 @@ export const createInvitation = async ({
   const row = await db.transaction(async (tx) => {
     const activeCount = await getCountActiveInvitations(cartId, tx);
     if (activeCount >= MAX_ACTIVE_INVITES) {
-      throw new Error(
+      throw new UserFacingError(
         `Invite limit reached. You can have at most ${MAX_ACTIVE_INVITES} active invites.`,
       );
     }

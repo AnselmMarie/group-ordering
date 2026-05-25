@@ -7,6 +7,10 @@ import {
   type CreateInvitationInput,
 } from "@/features/invitations/schema";
 import { getAppUrl } from "@/lib/env";
+import {
+  UserFacingError,
+  withActionResult,
+} from "@/lib/server/action-result";
 import { getActiveCartIdByUser } from "@/server/cart/repository/get-active-cart-id-by-user";
 import { getCurrentUserId } from "@/server/auth/get-current-user-id";
 import { getLogoUrl } from "@/server/email/email-assets";
@@ -19,21 +23,21 @@ const INVITATION_SUBJECT = "You're invited to a group order";
 const INVITATION_DESCRIPTION =
   "invited you to join their group order. Accept to start adding items, or reject if you're not interested.";
 
-export async function createInvitation(
+async function createInvitationImpl(
   input: CreateInvitationInput,
 ): Promise<Invitation> {
   const parsed = createInvitationSchema.parse(input);
 
   const userId = await getCurrentUserId();
   if (!userId) {
-    throw new Error(
-      "We couldn't load your session. Please refresh and try again.",
+    throw new UserFacingError(
+      "We couldn't load your session. Please refresh the page. If the issue continues, clear your Better Auth cookies and try again.",
     );
   }
 
   const cartId = await getActiveCartIdByUser(userId);
   if (!cartId) {
-    throw new Error(
+    throw new UserFacingError(
       "We couldn't find your cart. Please refresh and try again.",
     );
   }
@@ -67,3 +71,8 @@ export async function createInvitation(
 
   return invitation;
 }
+
+export const createInvitation = withActionResult(
+  "createInvitation",
+  createInvitationImpl,
+);

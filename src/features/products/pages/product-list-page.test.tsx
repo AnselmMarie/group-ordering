@@ -1,20 +1,20 @@
 import { render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { getCartCount } from "@/server/cart/actions/get-cart-count";
+import { getCartCount } from "@/server/cart/repository/get-cart-count";
 import { getActiveCartRole } from "@/server/cart/repository/get-active-cart-role";
 import { createMockProduct } from "@/server/product/mock-data/mock-product";
 import { getAllProducts } from "@/server/product/repository/get-all-products";
 
 import ProductListPage from "./product-list-page";
 
-vi.mock("@/server/cart/actions/get-cart-count", () => ({
+vi.mock("@/server/cart/repository/get-cart-count", () => ({
   getCartCount: vi.fn(),
 }));
-vi.mock("@/server/cart/repository/find-active-cart-role", () => ({
+vi.mock("@/server/cart/repository/get-active-cart-role", () => ({
   getActiveCartRole: vi.fn(),
 }));
-vi.mock("@/server/product/repository/product-find-all", () => ({
+vi.mock("@/server/product/repository/get-all-products", () => ({
   getAllProducts: vi.fn(),
 }));
 
