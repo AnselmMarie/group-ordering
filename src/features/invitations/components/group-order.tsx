@@ -9,15 +9,20 @@ import { useAppForm } from "@/ui/components/form/use-app-form";
 import { createInvitationSchema } from "@/features/invitations/schema";
 import { createInvitation } from "@/server/invitations/actions/create-invitation";
 
-export const GroupOrder = () => {
+export const GroupOrder = ({
+  inviteStatus,
+}: {
+  inviteStatus: React.ReactNode;
+}) => {
   const [open, setOpen] = useState(false);
   const form = useAppForm({
     defaultValues: { name: "", email: "" },
     validators: {
       onChange: createInvitationSchema,
     },
-    onSubmit: async ({ value }) => {
+    onSubmit: async ({ value, formApi }) => {
       await createInvitation(value);
+      formApi.setFieldValue("email", "");
     },
   });
 
@@ -41,7 +46,12 @@ export const GroupOrder = () => {
           }}
         >
           <form.AppField name="name">
-            {(f) => <f.TextField label="Your Name" />}
+            {(f) => (
+              <f.TextField
+                label="Your Name"
+                helperText="This is to let the invited user know who sent the invite"
+              />
+            )}
           </form.AppField>
           <form.AppField name="email">
             {(f) => <f.TextField label="Email" />}
@@ -50,6 +60,8 @@ export const GroupOrder = () => {
             <form.SubmitButton>Create Invite</form.SubmitButton>
           </form.AppForm>
         </form>
+
+        {inviteStatus}
       </SheetDialog>
     </>
   );

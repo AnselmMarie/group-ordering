@@ -1,0 +1,2 @@
+ALTER TABLE "cart_participant" RENAME COLUMN "joined_at" TO "created_at";--> statement-breakpoint
+ALTER TABLE "cart_participant" ADD COLUMN "updated_at" timestamp (3) with time zone DEFAULT now() NOT NULL;

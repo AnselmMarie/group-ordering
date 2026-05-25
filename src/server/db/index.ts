@@ -15,3 +15,5 @@ export const db = isNeon
   : drizzlePg(postgres(url), { schema });
 
 export type Database = typeof db;
+export type Tx = Parameters<Parameters<typeof db.transaction>[0]>[0];
+export type TxOrDb = Database | Tx;

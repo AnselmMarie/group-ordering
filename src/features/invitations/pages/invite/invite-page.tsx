@@ -1,8 +1,10 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { InviteActions } from "@/features/invitations/components/invite-actions";
-import { findInvitationById } from "@/server/invitations/repository/find-invitation-by-id";
+import { getInvitationById } from "@/server/invitations/repository/get-invitation-by-id";
 import { Body } from "@/ui/components/layout/body";
+import { Button } from "@/ui/shadcn/button";
 
 interface InvitePageProps {
   params: Promise<{ id: string }>;
@@ -12,26 +14,50 @@ interface InvitePageProps {
 const resolveInitialView = (
   action: string | undefined,
 ): "default" | "accept" | "reject" => {
-  if (action === "accept") return "accept";
-  if (action === "reject") return "reject";
-  return "default";
+  switch (action) {
+    case "accept":
+      return "accept";
+    case "reject":
+      return "reject";
+    default:
+      return "default";
+  }
 };
 
 const InvitePage = async ({ params, searchParams }: InvitePageProps) => {
   const { id } = await params;
   const { action } = await searchParams;
 
-  const invitation = await findInvitationById(id);
+  const invitation = await getInvitationById(id);
   if (!invitation) {
     notFound();
   }
 
-  if (invitation.status !== "pending") {
+  if (invitation.status === "accepted") {
     return (
       <Body>
         <h1 className="text-2xl font-bold">Invitation {invitation.status}</h1>
         <p className="text-sm text-muted-foreground">
-          This invitation has already been {invitation.status}.
+          This invitation has been {invitation.status}.
+        </p>
+
+        <Button
+          className="mt-4"
+          nativeButton={false}
+          render={<Link href="/" />}
+        >
+          Build Your Order
+        </Button>
+      </Body>
+    );
+  }
+
+  if (invitation.status === "rejected") {
+    return (
+      <Body>
+        <h1 className="text-2xl font-bold">Invitation {invitation.status}</h1>
+        <p className="text-sm text-muted-foreground">
+          This invitation has been {invitation.status}.
         </p>
       </Body>
     );

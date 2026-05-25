@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 
 import { createCart } from "@/server/cart/repository/create-cart";
-import { findCartIdByUserId } from "@/server/cart/repository/find-cart-id-by-user";
+import { findActiveCartIdByUser } from "@/server/cart/repository/find-active-cart-id-by-user";
 import { findCartItem } from "@/server/cart/repository/find-cart-item";
 import { incrementCartItem } from "@/server/cart/repository/increment-cart-item";
 import { insertCartItem } from "@/server/cart/repository/insert-cart-item";
@@ -16,7 +16,7 @@ export const addToCart = async (productId: string): Promise<void> => {
     throw new Error("User is not found");
   }
 
-  const existingCartId = await findCartIdByUserId(userId);
+  const existingCartId = await findActiveCartIdByUser(userId);
   const cartId = existingCartId ?? (await createCart(userId));
 
   if (!cartId) {

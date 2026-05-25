@@ -5,7 +5,7 @@ import { createChainStub } from "@/server/db/mock-db";
 import { MOCK_INVITATION_ID } from "@/server/invitations/mock-data/ids";
 import { buildMockInvitation } from "@/server/invitations/mock-data/mock-invitation";
 
-import { findInvitationById } from "./find-invitation-by-id";
+import { getInvitationById } from "./get-invitation-by-id";
 
 vi.mock("@/server/db", () => ({
   db: { select: vi.fn(), insert: vi.fn(), update: vi.fn() },
@@ -13,7 +13,7 @@ vi.mock("@/server/db", () => ({
 
 const mockedDb = vi.mocked(db);
 
-describe("findInvitationById", () => {
+describe("getInvitationById", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -22,7 +22,7 @@ describe("findInvitationById", () => {
     const row = buildMockInvitation();
     mockedDb.select.mockReturnValue(createChainStub([row]) as never);
 
-    const result = await findInvitationById(MOCK_INVITATION_ID);
+    const result = await getInvitationById(MOCK_INVITATION_ID);
 
     expect(result).toEqual(row);
   });
@@ -30,7 +30,7 @@ describe("findInvitationById", () => {
   it("returns null when no row exists", async () => {
     mockedDb.select.mockReturnValue(createChainStub([]) as never);
 
-    const result = await findInvitationById(MOCK_INVITATION_ID);
+    const result = await getInvitationById(MOCK_INVITATION_ID);
 
     expect(result).toBeNull();
   });
@@ -40,7 +40,7 @@ describe("findInvitationById", () => {
       createChainStub(null, new Error("select failed")) as never,
     );
 
-    await expect(findInvitationById(MOCK_INVITATION_ID)).rejects.toThrow(
+    await expect(getInvitationById(MOCK_INVITATION_ID)).rejects.toThrow(
       "select failed",
     );
   });

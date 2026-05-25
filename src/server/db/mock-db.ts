@@ -9,6 +9,8 @@ export interface ChainStub {
   values: Mock;
   returning: Mock;
   innerJoin: Mock;
+  leftJoin: Mock;
+  onConflictDoUpdate: Mock;
   then: (
     onFulfilled?: ((value: unknown) => unknown) | null,
     onRejected?: ((reason: unknown) => unknown) | null,
@@ -28,6 +30,8 @@ export const createChainStub = <T = ChainStub>(
     values: vi.fn(),
     returning: vi.fn(),
     innerJoin: vi.fn(),
+    leftJoin: vi.fn(),
+    onConflictDoUpdate: vi.fn(),
     then: (
       onFulfilled?: ((value: unknown) => unknown) | null,
       onRejected?: ((reason: unknown) => unknown) | null,
@@ -45,6 +49,8 @@ export const createChainStub = <T = ChainStub>(
   chain.values.mockReturnValue(chain);
   chain.returning.mockReturnValue(chain);
   chain.innerJoin.mockReturnValue(chain);
+  chain.leftJoin.mockReturnValue(chain);
+  chain.onConflictDoUpdate.mockReturnValue(chain);
 
   return chain as unknown as T;
 };

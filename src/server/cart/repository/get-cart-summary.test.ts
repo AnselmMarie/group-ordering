@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { getCurrentUserId } from "@/server/auth/get-current-user-id";
-import { findCartIdByUserId } from "@/server/cart/repository/find-cart-id-by-user";
+import { findActiveCartIdByUser } from "@/server/cart/repository/find-active-cart-id-by-user";
 import {
   MOCK_CART_ID,
   MOCK_CART_ITEM_ID,
@@ -19,15 +19,15 @@ import {
 vi.mock("@/server/auth/get-current-user-id", () => ({
   getCurrentUserId: vi.fn(),
 }));
-vi.mock("@/server/cart/repository/find-cart-id-by-user", () => ({
-  findCartIdByUserId: vi.fn(),
+vi.mock("@/server/cart/repository/find-active-cart-id-by-user", () => ({
+  findActiveCartIdByUser: vi.fn(),
 }));
 vi.mock("@/server/db", () => ({
   db: { select: vi.fn(), insert: vi.fn(), update: vi.fn() },
 }));
 
 const mockedGetCurrentUserId = vi.mocked(getCurrentUserId);
-const mockedFindCartIdByUserId = vi.mocked(findCartIdByUserId);
+const mockedFindActiveCartIdByUser = vi.mocked(findActiveCartIdByUser);
 const mockedDb = vi.mocked(db);
 
 const buildRow = (
@@ -52,22 +52,24 @@ describe("getCartSummary", () => {
     vi.clearAllMocks();
   });
 
-  it("throws when there is no current user", async () => {
+  it("returns null when there is no current user", async () => {
     mockedGetCurrentUserId.mockResolvedValue(undefined);
 
-    await expect(getCartSummary()).rejects.toBeNull();
-    expect(mockedFindCartIdByUserId).not.toHaveBeenCalled();
+    const result = await getCartSummary();
+
+    expect(result).toBeNull();
+    expect(mockedFindActiveCartIdByUser).not.toHaveBeenCalled();
     expect(mockedDb.select).not.toHaveBeenCalled();
   });
 
   it("returns null when the user has no cart", async () => {
     mockedGetCurrentUserId.mockResolvedValue(MOCK_USER_ID);
-    mockedFindCartIdByUserId.mockResolvedValue(null);
+    mockedFindActiveCartIdByUser.mockResolvedValue(null);
 
     const result = await getCartSummary();
 
     expect(result).toBeNull();
-    expect(mockedFindCartIdByUserId).toHaveBeenCalledWith(MOCK_USER_ID);
+    expect(mockedFindActiveCartIdByUser).toHaveBeenCalledWith(MOCK_USER_ID);
     expect(mockedDb.select).not.toHaveBeenCalled();
   });
 
@@ -88,7 +90,7 @@ describe("getCartSummary", () => {
     ];
 
     mockedGetCurrentUserId.mockResolvedValue(MOCK_USER_ID);
-    mockedFindCartIdByUserId.mockResolvedValue(MOCK_CART_ID);
+    mockedFindActiveCartIdByUser.mockResolvedValue(MOCK_CART_ID);
     mockedDb.select.mockReturnValue(createChainStub(rows));
 
     const result = await getCartSummary();
@@ -99,7 +101,7 @@ describe("getCartSummary", () => {
 
   it("returns an empty array when the cart has no items", async () => {
     mockedGetCurrentUserId.mockResolvedValue(MOCK_USER_ID);
-    mockedFindCartIdByUserId.mockResolvedValue(MOCK_CART_ID);
+    mockedFindActiveCartIdByUser.mockResolvedValue(MOCK_CART_ID);
     mockedDb.select.mockReturnValue(createChainStub([]));
 
     const result = await getCartSummary();
@@ -109,7 +111,7 @@ describe("getCartSummary", () => {
 
   it("propagates database errors", async () => {
     mockedGetCurrentUserId.mockResolvedValue(MOCK_USER_ID);
-    mockedFindCartIdByUserId.mockResolvedValue(MOCK_CART_ID);
+    mockedFindActiveCartIdByUser.mockResolvedValue(MOCK_CART_ID);
     mockedDb.select.mockReturnValue(
       createChainStub(null, new Error("join failed")),
     );

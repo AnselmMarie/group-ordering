@@ -1,7 +1,9 @@
 import { getCartCount } from "@/server/cart/actions/get-cart-count";
+import { findActiveCartRole } from "@/server/cart/repository/find-active-cart-role";
 import { productFindAll } from "@/server/product/repository/product-find-all";
 import { MiniCart } from "@/features/cart/components/mini-cart";
 import { MiniCartSummary } from "@/features/cart/components/mini-cart-summary";
+import { InvitationStatus } from "@/features/invitations/components/invitation-status";
 import { GroupOrder } from "@/features/invitations/components/group-order";
 import { ProductCard } from "@/features/products/components/product-card";
 import { Header } from "@/ui/components/header";
@@ -9,15 +11,20 @@ import { Page } from "@/ui/components/layout/page";
 import { Body } from "@/ui/components/layout/body";
 
 export default async function ProductListPage() {
-  const [cartCount, products] = await Promise.all([
+  const [cartCount, products, cartRole] = await Promise.all([
     getCartCount(),
     productFindAll(),
+    findActiveCartRole(),
   ]);
+
+  const isOwner = cartRole?.role === "owner";
 
   return (
     <Page>
       <Header
-        groupOrder={<GroupOrder />}
+        groupOrder={
+          isOwner ? <GroupOrder inviteStatus={<InvitationStatus />} /> : null
+        }
         miniCart={
           <MiniCart initialCount={cartCount} summary={<MiniCartSummary />} />
         }

@@ -1,7 +1,9 @@
 "use server";
 
 import { getCurrentUserId } from "@/server/auth/get-current-user-id";
-import { findInvitationById } from "@/server/invitations/repository/find-invitation-by-id";
+import { upsertActiveParticipant } from "@/server/cart/repository/upsert-active-participant";
+import { db } from "@/server/db";
+import { getInvitationById } from "@/server/invitations/repository/get-invitation-by-id";
 import { updateInvitationStatus } from "@/server/invitations/repository/update-invitation-status";
 import type { Invitation } from "@/server/invitations/types";
 
@@ -14,7 +16,7 @@ export async function acceptInvitation({
   id,
   email,
 }: AcceptInvitationInput): Promise<Invitation> {
-  const invitation = await findInvitationById(id);
+  const invitation = await getInvitationById(id);
   if (!invitation) {
     throw new Error("Invitation not found");
   }
@@ -32,10 +34,17 @@ export async function acceptInvitation({
     throw new Error("Session is not found");
   }
 
-  await updateInvitationStatus({
-    id,
-    status: "accepted",
-    acceptedByUserId: userId,
+  await db.transaction(async (tx) => {
+    await updateInvitationStatus(
+      { id, status: "accepted", acceptedByUserId: userId },
+      tx,
+    );
+
+    await upsertActiveParticipant(tx, {
+      cartId: invitation.cartId,
+      userId,
+      role: "editor",
+    });
   });
 
   return {

@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 
-import { db } from "@/server/db";
+import { db, type TxOrDb } from "@/server/db";
 import { cartInvitation } from "@/server/db/schema";
 import type { InvitationStatus } from "@/server/invitations/types";
 
@@ -10,12 +10,11 @@ interface UpdateInvitationStatusParams {
   acceptedByUserId?: string | null;
 }
 
-export const updateInvitationStatus = async ({
-  id,
-  status,
-  acceptedByUserId,
-}: UpdateInvitationStatusParams): Promise<void> => {
-  await db
+export const updateInvitationStatus = async (
+  { id, status, acceptedByUserId }: UpdateInvitationStatusParams,
+  tx: TxOrDb = db,
+): Promise<void> => {
+  await tx
     .update(cartInvitation)
     .set({
       status,
