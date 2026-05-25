@@ -2,10 +2,10 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { auth } from "@/server/auth";
 import { createCart } from "@/server/cart/repository/create-cart";
-import { findActiveCartIdByUser } from "@/server/cart/repository/find-active-cart-id-by-user";
-import { findCartItem } from "@/server/cart/repository/find-cart-item";
-import { incrementCartItem } from "@/server/cart/repository/increment-cart-item";
-import { insertCartItem } from "@/server/cart/repository/insert-cart-item";
+import { getActiveCartIdByUser } from "@/server/cart/repository/get-active-cart-id-by-user";
+import { getCartItem } from "@/server/cart/repository/get-cart-item";
+import { updateCartItem } from "@/server/cart/repository/update-cart-item";
+import { createCartItem } from "@/server/cart/repository/create-cart-item";
 import {
   MOCK_CART_ID,
   MOCK_CART_ITEM_ID,
@@ -14,7 +14,7 @@ import {
 } from "@/server/cart/mock-data/ids";
 import { createMockSession } from "@/server/cart/mock-data/session";
 import { createMockProduct } from "@/server/product/mock-data/mock-product";
-import { productFindById } from "@/server/product/repository/product-find-by-id";
+import { getProductById } from "@/server/product/repository/get-product-by-id";
 import { revalidatePath } from "next/cache";
 
 import { addToCart } from "./add-to-cart";
@@ -32,28 +32,28 @@ vi.mock("@/server/cart/repository/create-cart", () => ({
   createCart: vi.fn(),
 }));
 vi.mock("@/server/cart/repository/find-active-cart-id-by-user", () => ({
-  findActiveCartIdByUser: vi.fn(),
+  getActiveCartIdByUser: vi.fn(),
 }));
 vi.mock("@/server/cart/repository/find-cart-item", () => ({
-  findCartItem: vi.fn(),
+  getCartItem: vi.fn(),
 }));
 vi.mock("@/server/cart/repository/increment-cart-item", () => ({
-  incrementCartItem: vi.fn(),
+  updateCartItem: vi.fn(),
 }));
 vi.mock("@/server/cart/repository/insert-cart-item", () => ({
-  insertCartItem: vi.fn(),
+  createCartItem: vi.fn(),
 }));
 vi.mock("@/server/product/repository/product-find-by-id", () => ({
-  productFindById: vi.fn(),
+  getProductById: vi.fn(),
 }));
 
 const mockedGetSession = vi.mocked(auth.api.getSession);
 const mockedCreateCart = vi.mocked(createCart);
-const mockedFindActiveCartIdByUser = vi.mocked(findActiveCartIdByUser);
-const mockedFindCartItem = vi.mocked(findCartItem);
-const mockedIncrementCartItem = vi.mocked(incrementCartItem);
-const mockedInsertCartItem = vi.mocked(insertCartItem);
-const mockedProductFindById = vi.mocked(productFindById);
+const mockedgetActiveCartIdByUser = vi.mocked(getActiveCartIdByUser);
+const mockedgetCartItem = vi.mocked(getCartItem);
+const mockedupdateCartItem = vi.mocked(updateCartItem);
+const mockedcreateCartItem = vi.mocked(createCartItem);
+const mockedgetProductById = vi.mocked(getProductById);
 const mockedRevalidatePath = vi.mocked(revalidatePath);
 
 describe("addToCart", () => {
@@ -67,69 +67,69 @@ describe("addToCart", () => {
     await expect(addToCart(MOCK_PRODUCT_ID)).rejects.toThrow(
       "We couldn't load your session. Please refresh and try again.",
     );
-    expect(mockedFindActiveCartIdByUser).not.toHaveBeenCalled();
+    expect(mockedgetActiveCartIdByUser).not.toHaveBeenCalled();
     expect(mockedRevalidatePath).not.toHaveBeenCalled();
   });
 
   it("creates a new cart when none exists, then inserts the item", async () => {
     mockedGetSession.mockResolvedValue(createMockSession());
-    mockedFindActiveCartIdByUser.mockResolvedValue(null);
+    mockedgetActiveCartIdByUser.mockResolvedValue(null);
     mockedCreateCart.mockResolvedValue(MOCK_CART_ID);
-    mockedFindCartItem.mockResolvedValue(null);
-    mockedProductFindById.mockResolvedValue(createMockProduct());
+    mockedgetCartItem.mockResolvedValue(null);
+    mockedgetProductById.mockResolvedValue(createMockProduct());
 
     await addToCart(MOCK_PRODUCT_ID);
 
     expect(mockedCreateCart).toHaveBeenCalledWith(MOCK_USER_ID);
-    expect(mockedInsertCartItem).toHaveBeenCalledWith({
+    expect(mockedcreateCartItem).toHaveBeenCalledWith({
       cartId: MOCK_CART_ID,
       productId: MOCK_PRODUCT_ID,
       userId: MOCK_USER_ID,
       price: 1022,
     });
-    expect(mockedIncrementCartItem).not.toHaveBeenCalled();
+    expect(mockedupdateCartItem).not.toHaveBeenCalled();
     expect(mockedRevalidatePath).toHaveBeenCalledWith("/");
   });
 
   it("throws when cart creation fails", async () => {
     mockedGetSession.mockResolvedValue(createMockSession());
-    mockedFindActiveCartIdByUser.mockResolvedValue(null);
+    mockedgetActiveCartIdByUser.mockResolvedValue(null);
     mockedCreateCart.mockResolvedValue(undefined);
 
     await expect(addToCart(MOCK_PRODUCT_ID)).rejects.toThrow(
       "We couldn't open your cart. Please try again.",
     );
-    expect(mockedFindCartItem).not.toHaveBeenCalled();
+    expect(mockedgetCartItem).not.toHaveBeenCalled();
     expect(mockedRevalidatePath).not.toHaveBeenCalled();
   });
 
   it("increments quantity when the item already exists", async () => {
     mockedGetSession.mockResolvedValue(createMockSession());
-    mockedFindActiveCartIdByUser.mockResolvedValue(MOCK_CART_ID);
-    mockedFindCartItem.mockResolvedValue({ id: MOCK_CART_ITEM_ID });
+    mockedgetActiveCartIdByUser.mockResolvedValue(MOCK_CART_ID);
+    mockedgetCartItem.mockResolvedValue({ id: MOCK_CART_ITEM_ID });
 
     await addToCart(MOCK_PRODUCT_ID);
 
     expect(mockedCreateCart).not.toHaveBeenCalled();
-    expect(mockedIncrementCartItem).toHaveBeenCalledWith({
+    expect(mockedupdateCartItem).toHaveBeenCalledWith({
       cartId: MOCK_CART_ID,
       productId: MOCK_PRODUCT_ID,
       userId: MOCK_USER_ID,
     });
-    expect(mockedInsertCartItem).not.toHaveBeenCalled();
+    expect(mockedcreateCartItem).not.toHaveBeenCalled();
     expect(mockedRevalidatePath).toHaveBeenCalledWith("/");
   });
 
   it("inserts a new item when the cart exists but the item does not", async () => {
     mockedGetSession.mockResolvedValue(createMockSession());
-    mockedFindActiveCartIdByUser.mockResolvedValue(MOCK_CART_ID);
-    mockedFindCartItem.mockResolvedValue(null);
-    mockedProductFindById.mockResolvedValue(createMockProduct({ price: 1022 }));
+    mockedgetActiveCartIdByUser.mockResolvedValue(MOCK_CART_ID);
+    mockedgetCartItem.mockResolvedValue(null);
+    mockedgetProductById.mockResolvedValue(createMockProduct({ price: 1022 }));
 
     await addToCart(MOCK_PRODUCT_ID);
 
-    expect(mockedProductFindById).toHaveBeenCalledWith(MOCK_PRODUCT_ID);
-    expect(mockedInsertCartItem).toHaveBeenCalledWith({
+    expect(mockedgetProductById).toHaveBeenCalledWith(MOCK_PRODUCT_ID);
+    expect(mockedcreateCartItem).toHaveBeenCalledWith({
       cartId: MOCK_CART_ID,
       productId: MOCK_PRODUCT_ID,
       userId: MOCK_USER_ID,
@@ -140,23 +140,23 @@ describe("addToCart", () => {
 
   it("throws when the product is not found", async () => {
     mockedGetSession.mockResolvedValue(createMockSession());
-    mockedFindActiveCartIdByUser.mockResolvedValue(MOCK_CART_ID);
-    mockedFindCartItem.mockResolvedValue(null);
-    mockedProductFindById.mockResolvedValue(null);
+    mockedgetActiveCartIdByUser.mockResolvedValue(MOCK_CART_ID);
+    mockedgetCartItem.mockResolvedValue(null);
+    mockedgetProductById.mockResolvedValue(null);
 
     await expect(addToCart(MOCK_PRODUCT_ID)).rejects.toThrow(
       "This product is no longer available.",
     );
-    expect(mockedInsertCartItem).not.toHaveBeenCalled();
+    expect(mockedcreateCartItem).not.toHaveBeenCalled();
     expect(mockedRevalidatePath).not.toHaveBeenCalled();
   });
 
   it("propagates repository errors and skips revalidation", async () => {
     mockedGetSession.mockResolvedValue(createMockSession());
-    mockedFindActiveCartIdByUser.mockResolvedValue(MOCK_CART_ID);
-    mockedFindCartItem.mockResolvedValue(null);
-    mockedProductFindById.mockResolvedValue(createMockProduct());
-    mockedInsertCartItem.mockRejectedValue(new Error("insert failed"));
+    mockedgetActiveCartIdByUser.mockResolvedValue(MOCK_CART_ID);
+    mockedgetCartItem.mockResolvedValue(null);
+    mockedgetProductById.mockResolvedValue(createMockProduct());
+    mockedcreateCartItem.mockRejectedValue(new Error("insert failed"));
 
     await expect(addToCart(MOCK_PRODUCT_ID)).rejects.toThrow("insert failed");
     expect(mockedRevalidatePath).not.toHaveBeenCalled();

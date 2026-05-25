@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { MOCK_CART_ID, MOCK_USER_ID } from "@/server/cart/mock-data/ids";
-import { findActiveCartIdByUser } from "@/server/cart/repository/find-active-cart-id-by-user";
+import { getActiveCartIdByUser } from "@/server/cart/repository/get-active-cart-id-by-user";
 import { getCurrentUserId } from "@/server/auth/get-current-user-id";
 import { sendEmail } from "@/server/email/send-email";
 import {
@@ -17,7 +17,7 @@ vi.mock("@/server/auth/get-current-user-id", () => ({
   getCurrentUserId: vi.fn(),
 }));
 vi.mock("@/server/cart/repository/find-active-cart-id-by-user", () => ({
-  findActiveCartIdByUser: vi.fn(),
+  getActiveCartIdByUser: vi.fn(),
 }));
 vi.mock("@/server/email/send-email", () => ({
   sendEmail: vi.fn(),
@@ -27,7 +27,7 @@ vi.mock("@/server/invitations/repository/create-invitation", () => ({
 }));
 
 const mockedGetCurrentUserId = vi.mocked(getCurrentUserId);
-const mockedFindActiveCartIdByUser = vi.mocked(findActiveCartIdByUser);
+const mockedgetActiveCartIdByUser = vi.mocked(getActiveCartIdByUser);
 const mockedSendEmail = vi.mocked(sendEmail);
 const mockedCreateRow = vi.mocked(createInvitationRow);
 
@@ -45,7 +45,7 @@ describe("createInvitation", () => {
   it("inserts a row and sends an email with accept/reject links", async () => {
     const invitation = buildMockInvitation();
     mockedGetCurrentUserId.mockResolvedValue(MOCK_USER_ID);
-    mockedFindActiveCartIdByUser.mockResolvedValue(MOCK_CART_ID);
+    mockedgetActiveCartIdByUser.mockResolvedValue(MOCK_CART_ID);
     mockedCreateRow.mockResolvedValue(invitation);
     mockedSendEmail.mockResolvedValue({ ok: true });
 
@@ -66,7 +66,7 @@ describe("createInvitation", () => {
   it("does not roll back the insert when email fails", async () => {
     const invitation = buildMockInvitation();
     mockedGetCurrentUserId.mockResolvedValue(MOCK_USER_ID);
-    mockedFindActiveCartIdByUser.mockResolvedValue(MOCK_CART_ID);
+    mockedgetActiveCartIdByUser.mockResolvedValue(MOCK_CART_ID);
     mockedCreateRow.mockResolvedValue(invitation);
     mockedSendEmail.mockResolvedValue({ ok: false });
 
@@ -86,7 +86,7 @@ describe("createInvitation", () => {
 
   it("throws when the user has no cart", async () => {
     mockedGetCurrentUserId.mockResolvedValue(MOCK_USER_ID);
-    mockedFindActiveCartIdByUser.mockResolvedValue(null);
+    mockedgetActiveCartIdByUser.mockResolvedValue(null);
 
     await expect(createInvitation(validInput)).rejects.toThrow(
       "We couldn't find your cart. Please refresh and try again.",
@@ -98,7 +98,7 @@ describe("createInvitation", () => {
     delete process.env.APP_URL;
     const invitation = buildMockInvitation();
     mockedGetCurrentUserId.mockResolvedValue(MOCK_USER_ID);
-    mockedFindActiveCartIdByUser.mockResolvedValue(MOCK_CART_ID);
+    mockedgetActiveCartIdByUser.mockResolvedValue(MOCK_CART_ID);
     mockedCreateRow.mockResolvedValue(invitation);
     const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 

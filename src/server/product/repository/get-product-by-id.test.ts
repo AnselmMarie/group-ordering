@@ -8,7 +8,7 @@ import {
 } from "@/server/product/mock-data/ids";
 import { createMockProduct } from "@/server/product/mock-data/mock-product";
 
-import { productFindById } from "./product-find-by-id";
+import { getProductById } from "./get-product-by-id";
 
 vi.mock("@/server/db", () => ({
   db: { select: vi.fn(), insert: vi.fn(), update: vi.fn() },
@@ -16,7 +16,7 @@ vi.mock("@/server/db", () => ({
 
 const mockedDb = vi.mocked(db);
 
-describe("productFindById", () => {
+describe("getProductById", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -25,7 +25,7 @@ describe("productFindById", () => {
     const row = createMockProduct({ id: MOCK_PRODUCT_ID });
     mockedDb.select.mockReturnValue(createChainStub([row]));
 
-    const result = await productFindById(MOCK_PRODUCT_ID);
+    const result = await getProductById(MOCK_PRODUCT_ID);
 
     expect(result).toEqual(row);
     expect(mockedDb.select).toHaveBeenCalledTimes(1);
@@ -34,7 +34,7 @@ describe("productFindById", () => {
   it("returns null when no row is found", async () => {
     mockedDb.select.mockReturnValue(createChainStub([]));
 
-    const result = await productFindById(MOCK_MISSING_PRODUCT_ID);
+    const result = await getProductById(MOCK_MISSING_PRODUCT_ID);
 
     expect(result).toBeNull();
   });
@@ -43,7 +43,7 @@ describe("productFindById", () => {
     const chain = createChainStub([]);
     mockedDb.select.mockReturnValue(chain as never);
 
-    await productFindById(MOCK_PRODUCT_ID);
+    await getProductById(MOCK_PRODUCT_ID);
 
     expect(chain.limit).toHaveBeenCalledWith(1);
   });
@@ -53,7 +53,7 @@ describe("productFindById", () => {
       createChainStub(null, new Error("select failed")),
     );
 
-    await expect(productFindById(MOCK_PRODUCT_ID)).rejects.toThrow(
+    await expect(getProductById(MOCK_PRODUCT_ID)).rejects.toThrow(
       "select failed",
     );
   });

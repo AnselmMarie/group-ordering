@@ -1,7 +1,7 @@
 import { db } from "@/server/db";
 import { cartItem } from "@/server/db/schema";
 
-interface InsertCartItemParams {
+interface CreateCartItemParams {
   cartId: string;
   productId: string;
   userId: string;
@@ -9,13 +9,13 @@ interface InsertCartItemParams {
   quantity?: number;
 }
 
-export const insertCartItem = async ({
+export const createCartItem = async ({
   cartId,
   productId,
   userId,
   price,
   quantity = 1,
-}: InsertCartItemParams): Promise<void> => {
+}: CreateCartItemParams): Promise<void> => {
   await db
     .insert(cartItem)
     .values({ cartId, productId, userId, price, quantity });

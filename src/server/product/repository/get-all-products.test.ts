@@ -8,7 +8,7 @@ import {
 } from "@/server/product/mock-data/ids";
 import { createMockProduct } from "@/server/product/mock-data/mock-product";
 
-import { productFindAll } from "./product-find-all";
+import { getAllProducts } from "./get-all-products";
 
 vi.mock("@/server/db", () => ({
   db: { select: vi.fn(), insert: vi.fn(), update: vi.fn() },
@@ -16,7 +16,7 @@ vi.mock("@/server/db", () => ({
 
 const mockedDb = vi.mocked(db);
 
-describe("productFindAll", () => {
+describe("getAllProducts", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -28,7 +28,7 @@ describe("productFindAll", () => {
     ];
     mockedDb.select.mockReturnValue(createChainStub(rows));
 
-    const result = await productFindAll();
+    const result = await getAllProducts();
 
     expect(result).toEqual(rows);
     expect(mockedDb.select).toHaveBeenCalledTimes(1);
@@ -37,7 +37,7 @@ describe("productFindAll", () => {
   it("returns an empty array when no products exist", async () => {
     mockedDb.select.mockReturnValue(createChainStub([]));
 
-    const result = await productFindAll();
+    const result = await getAllProducts();
 
     expect(result).toEqual([]);
   });
@@ -46,7 +46,7 @@ describe("productFindAll", () => {
     const chain = createChainStub([]);
     mockedDb.select.mockReturnValue(chain as never);
 
-    await productFindAll();
+    await getAllProducts();
 
     expect(chain.orderBy).toHaveBeenCalledTimes(1);
   });
@@ -56,6 +56,6 @@ describe("productFindAll", () => {
       createChainStub(null, new Error("select failed")),
     );
 
-    await expect(productFindAll()).rejects.toThrow("select failed");
+    await expect(getAllProducts()).rejects.toThrow("select failed");
   });
 });

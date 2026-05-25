@@ -8,7 +8,7 @@ import {
 } from "@/server/cart/mock-data/ids";
 import { createChainStub } from "@/server/db/mock-db";
 
-import { incrementCartItem } from "./increment-cart-item";
+import { updateCartItem } from "./update-cart-item";
 
 vi.mock("@/server/db", () => ({
   db: { select: vi.fn(), insert: vi.fn(), update: vi.fn() },
@@ -22,7 +22,7 @@ const params = {
   userId: MOCK_USER_ID,
 };
 
-describe("incrementCartItem", () => {
+describe("updateCartItem", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -31,7 +31,7 @@ describe("incrementCartItem", () => {
     const chain = createChainStub([]);
     mockedDb.update.mockReturnValue(chain as never);
 
-    await incrementCartItem(params);
+    await updateCartItem(params);
 
     expect(mockedDb.update).toHaveBeenCalledTimes(1);
     expect(chain.set).toHaveBeenCalledTimes(1);
@@ -41,13 +41,13 @@ describe("incrementCartItem", () => {
   it("resolves to undefined on success", async () => {
     mockedDb.update.mockReturnValue(createChainStub([]) as never);
 
-    await expect(incrementCartItem(params)).resolves.toBeUndefined();
+    await expect(updateCartItem(params)).resolves.toBeUndefined();
   });
 
   it("propagates database errors", async () => {
     const dbError = new Error("update failed");
     mockedDb.update.mockReturnValue(createChainStub(null, dbError) as never);
 
-    await expect(incrementCartItem(params)).rejects.toThrow("update failed");
+    await expect(updateCartItem(params)).rejects.toThrow("update failed");
   });
 });

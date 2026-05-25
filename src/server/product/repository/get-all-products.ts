@@ -3,6 +3,6 @@ import { product } from "@/server/db/schema";
 
 import type { Product } from "../types";
 
-export const productFindAll = async (): Promise<Product[]> => {
+export const getAllProducts = async (): Promise<Product[]> => {
   return db.select().from(product).orderBy(product.createdAt);
 };

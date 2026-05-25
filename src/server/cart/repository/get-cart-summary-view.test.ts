@@ -1,14 +1,14 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { MOCK_CART_ID, MOCK_USER_ID } from "@/server/cart/mock-data/ids";
-import { findActiveCartRole } from "@/server/cart/repository/find-active-cart-role";
+import { getActiveCartRole } from "@/server/cart/repository/get-active-cart-role";
 import { getCartSummaryEditor } from "@/server/cart/repository/get-cart-summary-editor";
 import { getCartSummaryOwner } from "@/server/cart/repository/get-cart-summary-owner";
 
 import { getCartSummaryView } from "./get-cart-summary-view";
 
 vi.mock("@/server/cart/repository/find-active-cart-role", () => ({
-  findActiveCartRole: vi.fn(),
+  getActiveCartRole: vi.fn(),
 }));
 vi.mock("@/server/cart/repository/get-cart-summary-editor", () => ({
   getCartSummaryEditor: vi.fn(),
@@ -17,7 +17,7 @@ vi.mock("@/server/cart/repository/get-cart-summary-owner", () => ({
   getCartSummaryOwner: vi.fn(),
 }));
 
-const mockedFindActiveCartRole = vi.mocked(findActiveCartRole);
+const mockedgetActiveCartRole = vi.mocked(getActiveCartRole);
 const mockedGetCartSummaryEditor = vi.mocked(getCartSummaryEditor);
 const mockedGetCartSummaryOwner = vi.mocked(getCartSummaryOwner);
 
@@ -27,7 +27,7 @@ describe("getCartSummaryView (orchestrator)", () => {
   });
 
   it("returns null when there is no active cart role", async () => {
-    mockedFindActiveCartRole.mockResolvedValue(null);
+    mockedgetActiveCartRole.mockResolvedValue(null);
 
     const result = await getCartSummaryView();
 
@@ -37,7 +37,7 @@ describe("getCartSummaryView (orchestrator)", () => {
   });
 
   it("delegates to getCartSummaryOwner when the viewer is the owner", async () => {
-    mockedFindActiveCartRole.mockResolvedValue({
+    mockedgetActiveCartRole.mockResolvedValue({
       cartId: MOCK_CART_ID,
       userId: MOCK_USER_ID,
       role: "owner",
@@ -52,7 +52,7 @@ describe("getCartSummaryView (orchestrator)", () => {
   });
 
   it("delegates to getCartSummaryEditor with cartId and userId when the viewer is an editor", async () => {
-    mockedFindActiveCartRole.mockResolvedValue({
+    mockedgetActiveCartRole.mockResolvedValue({
       cartId: MOCK_CART_ID,
       userId: MOCK_USER_ID,
       role: "editor",

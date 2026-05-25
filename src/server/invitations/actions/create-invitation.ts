@@ -7,7 +7,7 @@ import {
   type CreateInvitationInput,
 } from "@/features/invitations/schema";
 import { getAppUrl } from "@/lib/env";
-import { findActiveCartIdByUser } from "@/server/cart/repository/find-active-cart-id-by-user";
+import { getActiveCartIdByUser } from "@/server/cart/repository/get-active-cart-id-by-user";
 import { getCurrentUserId } from "@/server/auth/get-current-user-id";
 import { getLogoUrl } from "@/server/email/email-assets";
 import { sendEmail } from "@/server/email/send-email";
@@ -26,12 +26,16 @@ export async function createInvitation(
 
   const userId = await getCurrentUserId();
   if (!userId) {
-    throw new Error("We couldn't load your session. Please refresh and try again.");
+    throw new Error(
+      "We couldn't load your session. Please refresh and try again.",
+    );
   }
 
-  const cartId = await findActiveCartIdByUser(userId);
+  const cartId = await getActiveCartIdByUser(userId);
   if (!cartId) {
-    throw new Error("We couldn't find your cart. Please refresh and try again.");
+    throw new Error(
+      "We couldn't find your cart. Please refresh and try again.",
+    );
   }
 
   const invitation = await createInvitationRow({

@@ -1,17 +1,17 @@
 "use server";
 
-import { countCartItems } from "@/server/cart/repository/count-cart-items";
-import { findActiveCartRole } from "@/server/cart/repository/find-active-cart-role";
+import { getCountCartItems } from "@/server/cart/repository/get-count-cart-items";
+import { getActiveCartRole } from "@/server/cart/repository/get-active-cart-role";
 
 export const getCartCount = async (): Promise<number> => {
-  const ctx = await findActiveCartRole();
+  const ctx = await getActiveCartRole();
   if (!ctx) {
     return 0;
   }
 
   if (ctx.role === "editor") {
-    return countCartItems(ctx.cartId, ctx.userId);
+    return getCountCartItems(ctx.cartId, ctx.userId);
   }
 
-  return countCartItems(ctx.cartId);
+  return getCountCartItems(ctx.cartId);
 };

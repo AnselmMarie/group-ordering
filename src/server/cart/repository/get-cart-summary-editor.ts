@@ -4,7 +4,7 @@ import type { CartSummaryItem } from "@/server/cart/repository/get-cart-summary"
 import { db } from "@/server/db";
 import { cartItem, product } from "@/server/db/schema";
 
-export interface EditorCartSummaryView {
+export interface CartSummaryEditor {
   kind: "solo";
   items: CartSummaryItem[];
 }
@@ -12,7 +12,7 @@ export interface EditorCartSummaryView {
 export const getCartSummaryEditor = async (
   cartId: string,
   userId: string,
-): Promise<EditorCartSummaryView> => {
+): Promise<CartSummaryEditor> => {
   const items = await db
     .select({
       id: cartItem.id,

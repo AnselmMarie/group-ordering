@@ -2,9 +2,9 @@ import { render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { getCartCount } from "@/server/cart/actions/get-cart-count";
-import { findActiveCartRole } from "@/server/cart/repository/find-active-cart-role";
+import { getActiveCartRole } from "@/server/cart/repository/get-active-cart-role";
 import { createMockProduct } from "@/server/product/mock-data/mock-product";
-import { productFindAll } from "@/server/product/repository/product-find-all";
+import { getAllProducts } from "@/server/product/repository/get-all-products";
 
 import ProductListPage from "./product-list-page";
 
@@ -12,10 +12,10 @@ vi.mock("@/server/cart/actions/get-cart-count", () => ({
   getCartCount: vi.fn(),
 }));
 vi.mock("@/server/cart/repository/find-active-cart-role", () => ({
-  findActiveCartRole: vi.fn(),
+  getActiveCartRole: vi.fn(),
 }));
 vi.mock("@/server/product/repository/product-find-all", () => ({
-  productFindAll: vi.fn(),
+  getAllProducts: vi.fn(),
 }));
 
 vi.mock("@/features/cart/components/mini-cart", () => ({
@@ -55,12 +55,14 @@ vi.mock("@/ui/components/layout/page", () => ({
   Page: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
 }));
 vi.mock("@/ui/components/layout/body", () => ({
-  Body: ({ children }: { children: React.ReactNode }) => <main>{children}</main>,
+  Body: ({ children }: { children: React.ReactNode }) => (
+    <main>{children}</main>
+  ),
 }));
 
 const mockedGetCartCount = vi.mocked(getCartCount);
-const mockedFindActiveCartRole = vi.mocked(findActiveCartRole);
-const mockedProductFindAll = vi.mocked(productFindAll);
+const mockedgetActiveCartRole = vi.mocked(getActiveCartRole);
+const mockedgetAllProducts = vi.mocked(getAllProducts);
 
 const renderPage = async () => render(await ProductListPage());
 
@@ -71,12 +73,12 @@ describe("ProductListPage", () => {
 
   it("renders one ProductCard per product", async () => {
     mockedGetCartCount.mockResolvedValueOnce(0);
-    mockedProductFindAll.mockResolvedValueOnce([
+    mockedgetAllProducts.mockResolvedValueOnce([
       createMockProduct({ id: "p-1", title: "Latte" }),
       createMockProduct({ id: "p-2", title: "Mocha" }),
       createMockProduct({ id: "p-3", title: "Drip" }),
     ]);
-    mockedFindActiveCartRole.mockResolvedValueOnce(null);
+    mockedgetActiveCartRole.mockResolvedValueOnce(null);
 
     await renderPage();
 
@@ -88,8 +90,8 @@ describe("ProductListPage", () => {
 
   it("forwards the cart count to MiniCart", async () => {
     mockedGetCartCount.mockResolvedValueOnce(7);
-    mockedProductFindAll.mockResolvedValueOnce([]);
-    mockedFindActiveCartRole.mockResolvedValueOnce(null);
+    mockedgetAllProducts.mockResolvedValueOnce([]);
+    mockedgetActiveCartRole.mockResolvedValueOnce(null);
 
     await renderPage();
 
@@ -98,8 +100,8 @@ describe("ProductListPage", () => {
 
   it("renders the GroupOrder slot when the user is the cart owner", async () => {
     mockedGetCartCount.mockResolvedValueOnce(0);
-    mockedProductFindAll.mockResolvedValueOnce([]);
-    mockedFindActiveCartRole.mockResolvedValueOnce({
+    mockedgetAllProducts.mockResolvedValueOnce([]);
+    mockedgetActiveCartRole.mockResolvedValueOnce({
       role: "owner",
       cartId: "cart-1",
       userId: "user-1",
@@ -112,8 +114,8 @@ describe("ProductListPage", () => {
 
   it("does not render the GroupOrder slot when the user is an editor", async () => {
     mockedGetCartCount.mockResolvedValueOnce(0);
-    mockedProductFindAll.mockResolvedValueOnce([]);
-    mockedFindActiveCartRole.mockResolvedValueOnce({
+    mockedgetAllProducts.mockResolvedValueOnce([]);
+    mockedgetActiveCartRole.mockResolvedValueOnce({
       role: "editor",
       cartId: "cart-1",
       userId: "user-2",
@@ -126,8 +128,8 @@ describe("ProductListPage", () => {
 
   it("does not render the GroupOrder slot when there is no active cart role", async () => {
     mockedGetCartCount.mockResolvedValueOnce(0);
-    mockedProductFindAll.mockResolvedValueOnce([]);
-    mockedFindActiveCartRole.mockResolvedValueOnce(null);
+    mockedgetAllProducts.mockResolvedValueOnce([]);
+    mockedgetActiveCartRole.mockResolvedValueOnce(null);
 
     await renderPage();
 

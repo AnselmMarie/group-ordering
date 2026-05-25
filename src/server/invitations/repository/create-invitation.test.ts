@@ -4,7 +4,7 @@ import { MOCK_CART_ID } from "@/server/cart/mock-data/ids";
 import { db } from "@/server/db";
 import { MAX_ACTIVE_INVITES } from "@/server/invitations/constants";
 import { buildMockInvitation } from "@/server/invitations/mock-data/mock-invitation";
-import { countActiveInvitations } from "@/server/invitations/repository/count-active-invitations";
+import { getCountActiveInvitations } from "@/server/invitations/repository/get-count-active-invitations";
 
 import { createInvitation } from "./create-invitation";
 
@@ -15,13 +15,13 @@ vi.mock("@/server/db", () => ({
   db: { transaction: vi.fn() },
 }));
 vi.mock("@/server/invitations/repository/count-active-invitations", () => ({
-  countActiveInvitations: vi.fn(),
+  getCountActiveInvitations: vi.fn(),
 }));
 
 const mockedDb = vi.mocked(db) as unknown as {
   transaction: ReturnType<typeof vi.fn>;
 };
-const mockedCountActiveInvitations = vi.mocked(countActiveInvitations);
+const mockedgetCountActiveInvitations = vi.mocked(getCountActiveInvitations);
 
 const buildInsertedRow = () => {
   const row = buildMockInvitation();
@@ -51,7 +51,7 @@ describe("createInvitation", () => {
 
   it("returns the mapped invitation when the transaction returns an inserted row", async () => {
     const inserted = buildInsertedRow();
-    mockedCountActiveInvitations.mockResolvedValueOnce(0);
+    mockedgetCountActiveInvitations.mockResolvedValueOnce(0);
     const tx = buildTx([inserted]);
     mockedDb.transaction.mockImplementationOnce(
       async (cb: (tx: unknown) => unknown) => cb(tx),
@@ -75,7 +75,7 @@ describe("createInvitation", () => {
   });
 
   it("throws 'Invite limit reached' when the active invitation count is at the max", async () => {
-    mockedCountActiveInvitations.mockResolvedValueOnce(MAX_ACTIVE_INVITES);
+    mockedgetCountActiveInvitations.mockResolvedValueOnce(MAX_ACTIVE_INVITES);
     const tx = buildTx([]);
     mockedDb.transaction.mockImplementationOnce(
       async (cb: (tx: unknown) => unknown) => cb(tx),
@@ -87,7 +87,7 @@ describe("createInvitation", () => {
   });
 
   it("throws 'Failed to create invitation' when the insert returns no rows", async () => {
-    mockedCountActiveInvitations.mockResolvedValueOnce(0);
+    mockedgetCountActiveInvitations.mockResolvedValueOnce(0);
     const tx = buildTx([]);
     mockedDb.transaction.mockImplementationOnce(
       async (cb: (tx: unknown) => unknown) => cb(tx),

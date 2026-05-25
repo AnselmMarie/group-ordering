@@ -4,15 +4,15 @@ import type { TxOrDb } from "@/server/db";
 import { cartParticipant } from "@/server/db/schema";
 import type { CartParticipantRole } from "@/server/cart/types";
 
-interface UpsertActiveParticipantInput {
+interface CreateActiveParticipantParams {
   cartId: string;
   userId: string;
   role: CartParticipantRole;
 }
 
-export const upsertActiveParticipant = async (
+export const createActiveParticipant = async (
   tx: TxOrDb,
-  { cartId, userId, role }: UpsertActiveParticipantInput,
+  { cartId, userId, role }: CreateActiveParticipantParams,
 ): Promise<void> => {
   await tx
     .update(cartParticipant)

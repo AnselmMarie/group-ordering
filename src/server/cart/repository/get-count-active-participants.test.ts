@@ -4,7 +4,7 @@ import { db } from "@/server/db";
 import { MOCK_CART_ID } from "@/server/cart/mock-data/ids";
 import { createChainStub } from "@/server/db/mock-db";
 
-import { countActiveParticipants } from "./count-active-participants";
+import { getCountActiveParticipants } from "./get-count-active-participants";
 
 vi.mock("@/server/db", () => ({
   db: { select: vi.fn(), insert: vi.fn(), update: vi.fn() },
@@ -12,7 +12,7 @@ vi.mock("@/server/db", () => ({
 
 const mockedDb = vi.mocked(db);
 
-describe("countActiveParticipants", () => {
+describe("getCountActiveParticipants", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -20,7 +20,7 @@ describe("countActiveParticipants", () => {
   it("returns the count from the first row", async () => {
     mockedDb.select.mockReturnValue(createChainStub([{ count: 3 }]));
 
-    const result = await countActiveParticipants(MOCK_CART_ID);
+    const result = await getCountActiveParticipants(MOCK_CART_ID);
 
     expect(result).toBe(3);
     expect(mockedDb.select).toHaveBeenCalledTimes(1);
@@ -29,7 +29,7 @@ describe("countActiveParticipants", () => {
   it("returns 0 when no rows are returned", async () => {
     mockedDb.select.mockReturnValue(createChainStub([]));
 
-    const result = await countActiveParticipants(MOCK_CART_ID);
+    const result = await getCountActiveParticipants(MOCK_CART_ID);
 
     expect(result).toBe(0);
   });
@@ -37,7 +37,7 @@ describe("countActiveParticipants", () => {
   it("returns 0 when count is null/undefined", async () => {
     mockedDb.select.mockReturnValue(createChainStub([{ count: null }]));
 
-    const result = await countActiveParticipants(MOCK_CART_ID);
+    const result = await getCountActiveParticipants(MOCK_CART_ID);
 
     expect(result).toBe(0);
   });
@@ -46,7 +46,7 @@ describe("countActiveParticipants", () => {
     const dbError = new Error("count failed");
     mockedDb.select.mockReturnValue(createChainStub(null, dbError));
 
-    await expect(countActiveParticipants(MOCK_CART_ID)).rejects.toThrow(
+    await expect(getCountActiveParticipants(MOCK_CART_ID)).rejects.toThrow(
       "count failed",
     );
   });

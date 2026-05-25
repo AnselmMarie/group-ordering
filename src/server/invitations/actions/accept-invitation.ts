@@ -1,7 +1,7 @@
 "use server";
 
 import { getCurrentUserId } from "@/server/auth/get-current-user-id";
-import { upsertActiveParticipant } from "@/server/cart/repository/upsert-active-participant";
+import { createActiveParticipant } from "@/server/cart/repository/create-active-participant";
 import { db } from "@/server/db";
 import { getInvitationById } from "@/server/invitations/repository/get-invitation-by-id";
 import { updateInvitationStatus } from "@/server/invitations/repository/update-invitation-status";
@@ -31,7 +31,9 @@ export async function acceptInvitation({
 
   const userId = await getCurrentUserId();
   if (!userId) {
-    throw new Error("We couldn't load your session. Please refresh and try again.");
+    throw new Error(
+      "We couldn't load your session. Please refresh and try again.",
+    );
   }
 
   await db.transaction(async (tx) => {
@@ -40,7 +42,7 @@ export async function acceptInvitation({
       tx,
     );
 
-    await upsertActiveParticipant(tx, {
+    await createActiveParticipant(tx, {
       cartId: invitation.cartId,
       userId,
       role: "editor",
