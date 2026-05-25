@@ -37,7 +37,7 @@ export const InviteAccept = ({
         onChange={(e) => setEmail(e.target.value)}
         disabled={isPending}
       />
-      <div className="flex gap-2">
+      <div className="flex justify-center gap-2">
         <Button
           disabled={isPending || !email}
           onClick={() => run({ id: invitationId, email })}

@@ -1,20 +1,17 @@
 "use server";
 
 import { countCartItems } from "@/server/cart/repository/count-cart-items";
-import { findActiveCartIdByUser } from "@/server/cart/repository/find-active-cart-id-by-user";
-import { getCurrentUserId } from "@/server/auth/get-current-user-id";
+import { findActiveCartRole } from "@/server/cart/repository/find-active-cart-role";
 
 export const getCartCount = async (): Promise<number> => {
-  const userId = await getCurrentUserId();
-
-  if (!userId) {
+  const ctx = await findActiveCartRole();
+  if (!ctx) {
     return 0;
   }
 
-  const cartId = await findActiveCartIdByUser(userId);
-  if (!cartId) {
-    return 0;
+  if (ctx.role === "editor") {
+    return countCartItems(ctx.cartId, ctx.userId);
   }
 
-  return countCartItems(cartId);
+  return countCartItems(ctx.cartId);
 };

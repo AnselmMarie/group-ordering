@@ -1,4 +1,3 @@
-import { getCurrentUserId } from "@/server/auth/get-current-user-id";
 import { findActiveCartRole } from "@/server/cart/repository/find-active-cart-role";
 import type { CartSummaryItem } from "@/server/cart/repository/get-cart-summary";
 import { getCartSummaryEditor } from "@/server/cart/repository/get-cart-summary-editor";
@@ -25,11 +24,7 @@ export const getCartSummaryView =
     }
 
     if (ctx.role === "editor") {
-      const userId = await getCurrentUserId();
-      if (!userId) {
-        return null;
-      }
-      return getCartSummaryEditor(ctx.cartId, userId);
+      return getCartSummaryEditor(ctx.cartId, ctx.userId);
     }
 
     return getCartSummaryOwner(ctx.cartId);

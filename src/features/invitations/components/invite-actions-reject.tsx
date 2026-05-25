@@ -27,7 +27,7 @@ export const InviteReject = ({
       <p className="text-sm text-muted-foreground">
         Are you sure you want to reject this invitation?
       </p>
-      <div className="flex gap-2">
+      <div className="flex justify-center gap-2">
         <Button
           variant="destructive"
           disabled={isPending}

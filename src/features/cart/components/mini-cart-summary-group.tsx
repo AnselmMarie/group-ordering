@@ -1,5 +1,5 @@
 import { formatUSD } from "@/lib/money";
-import type { CartParticipantGroup } from "@/server/cart/repository/get-cart-summary-grouped";
+import type { CartParticipantGroup } from "@/server/cart/repository/get-cart-summary-view";
 
 import { MiniCartSummaryItem } from "./mini-cart-summary-item";
 

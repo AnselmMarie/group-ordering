@@ -56,7 +56,11 @@ describe("findActiveCartRole", () => {
 
     const result = await findActiveCartRole();
 
-    expect(result).toEqual({ cartId: MOCK_CART_ID, role: "owner" });
+    expect(result).toEqual({
+      cartId: MOCK_CART_ID,
+      userId: MOCK_USER_ID,
+      role: "owner",
+    });
     expect(mockedDb.select).toHaveBeenCalledTimes(1);
   });
 
@@ -67,7 +71,11 @@ describe("findActiveCartRole", () => {
 
     const result = await findActiveCartRole();
 
-    expect(result).toEqual({ cartId: MOCK_CART_ID, role: "editor" });
+    expect(result).toEqual({
+      cartId: MOCK_CART_ID,
+      userId: MOCK_USER_ID,
+      role: "editor",
+    });
   });
 
   it("returns null when no participant row exists", async () => {

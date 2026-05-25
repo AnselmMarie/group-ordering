@@ -1,6 +1,6 @@
 import { formatUSD } from "@/lib/money";
-import { getCartSummaryView } from "@/server/cart/repository/get-cart-summary-grouped";
-
+import { getCartSummaryView } from "@/server/cart/repository/get-cart-summary-view";
+import { CheckoutButton } from "./checkout-button";
 import { MiniCartSummaryGroup } from "./mini-cart-summary-group";
 import { MiniCartSummaryItem } from "./mini-cart-summary-item";
 
@@ -46,16 +46,23 @@ export const MiniCartSummary = async () => {
   );
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex flex-col gap-6">
-        {view.groups.map((group) => (
-          <MiniCartSummaryGroup key={group.userId} {...group} />
-        ))}
-      </div>
+    <div className="relative">
+      <div className="flex flex-col gap-6 mb-[100px]">
+        <div className="flex flex-col gap-6">
+          {view.groups.map((group) => (
+            <MiniCartSummaryGroup key={group.userId} {...group} />
+          ))}
+        </div>
 
-      <div className="flex items-center justify-between border-t border-zinc-200 pt-4 dark:border-zinc-800">
-        <span className="text-sm font-medium">Total</span>
-        <span className="font-semibold">{formatUSD(grandTotal)}</span>
+        <div className="flex items-center justify-between border-t border-zinc-200 pt-4 dark:border-zinc-800">
+          <span className="text-sm font-medium">Total</span>
+          <span className="font-semibold">{formatUSD(grandTotal)}</span>
+        </div>
+      </div>
+      <div className="fixed bg-white w-[384px] bottom-0">
+        <div className="flex items-center justify-center border-t border-zinc-200 py-4 -ml-[16px] dark:border-zinc-800">
+          <CheckoutButton />
+        </div>
       </div>
     </div>
   );

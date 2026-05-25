@@ -8,6 +8,7 @@ import { cartParticipant } from "@/server/db/schema";
 
 export interface ActiveCartRole {
   cartId: string;
+  userId: string;
   role: CartParticipantRole;
 }
 
@@ -36,7 +37,7 @@ export const findActiveCartRole = async (): Promise<ActiveCartRole | null> => {
 
   const role = rows[0]?.role;
   if (role === "owner" || role === "editor") {
-    return { cartId, role };
+    return { cartId, userId, role };
   }
   return null;
 };
