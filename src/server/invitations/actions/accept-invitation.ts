@@ -18,20 +18,20 @@ export async function acceptInvitation({
 }: AcceptInvitationInput): Promise<Invitation> {
   const invitation = await getInvitationById(id);
   if (!invitation) {
-    throw new Error("Invitation not found");
+    throw new Error("This invitation no longer exists.");
   }
 
   if (invitation.status !== "pending") {
-    throw new Error(`Invitation already ${invitation.status}`);
+    throw new Error(`This invitation has already been ${invitation.status}.`);
   }
 
   if (invitation.invitedEmail.toLowerCase() !== email.trim().toLowerCase()) {
-    throw new Error("Email does not match the invitation");
+    throw new Error("That email doesn't match this invitation.");
   }
 
   const userId = await getCurrentUserId();
   if (!userId) {
-    throw new Error("Session is not found");
+    throw new Error("We couldn't load your session. Please refresh and try again.");
   }
 
   await db.transaction(async (tx) => {

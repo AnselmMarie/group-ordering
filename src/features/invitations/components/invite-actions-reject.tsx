@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 
+import { useServerAction } from "@/lib/hooks/use-server-action";
 import { Button } from "@/ui/shadcn/button";
 import { rejectInvitation } from "@/server/invitations/actions/reject-invitation";
 
@@ -18,29 +18,21 @@ export const InviteReject = ({
   onSetView,
 }: InviteActionsProps) => {
   const router = useRouter();
-  const [error, setError] = useState<string | null>(null);
-  const [isPending, startTransition] = useTransition();
-
-  const onReject = () => {
-    setError(null);
-    startTransition(async () => {
-      try {
-        await rejectInvitation(invitationId);
-        router.refresh();
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Something went wrong");
-      }
-    });
-  };
+  const [run, isPending] = useServerAction(rejectInvitation, {
+    onSuccess: () => router.refresh(),
+  });
 
   return (
     <div className="flex flex-col gap-3">
       <p className="text-sm text-muted-foreground">
         Are you sure you want to reject this invitation?
       </p>
-      {error && <p className="text-sm text-red-600">{error}</p>}
       <div className="flex gap-2">
-        <Button variant="destructive" disabled={isPending} onClick={onReject}>
+        <Button
+          variant="destructive"
+          disabled={isPending}
+          onClick={() => run(invitationId)}
+        >
           {isPending ? "Rejecting..." : "Reject invitation"}
         </Button>
         <Button

@@ -7,6 +7,7 @@ import { Button } from "@/ui/shadcn/button";
 import { SheetDialog } from "@/ui/components/sheet-dialog";
 import { useAppForm } from "@/ui/components/form/use-app-form";
 import { createInvitationSchema } from "@/features/invitations/schema";
+import { useServerAction } from "@/lib/hooks/use-server-action";
 import { createInvitation } from "@/server/invitations/actions/create-invitation";
 
 export const GroupOrder = ({
@@ -15,14 +16,17 @@ export const GroupOrder = ({
   inviteStatus: React.ReactNode;
 }) => {
   const [open, setOpen] = useState(false);
+  const [runCreate] = useServerAction(createInvitation);
   const form = useAppForm({
     defaultValues: { name: "", email: "" },
     validators: {
       onChange: createInvitationSchema,
     },
     onSubmit: async ({ value, formApi }) => {
-      await createInvitation(value);
-      formApi.setFieldValue("email", "");
+      const result = await runCreate(value);
+      if (result) {
+        formApi.setFieldValue("email", "");
+      }
     },
   });
 

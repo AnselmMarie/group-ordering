@@ -38,7 +38,7 @@ describe("rejectInvitation", () => {
     mockedFindById.mockResolvedValue(null);
 
     await expect(rejectInvitation(MOCK_INVITATION_ID)).rejects.toThrow(
-      "Invitation not found",
+      "This invitation no longer exists.",
     );
   });
 
@@ -48,7 +48,7 @@ describe("rejectInvitation", () => {
     );
 
     await expect(rejectInvitation(MOCK_INVITATION_ID)).rejects.toThrow(
-      "Invitation already rejected",
+      "This invitation has already been rejected.",
     );
   });
 });
