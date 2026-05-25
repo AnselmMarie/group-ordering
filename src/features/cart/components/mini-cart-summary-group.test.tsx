@@ -3,6 +3,8 @@ import { describe, expect, it } from "vitest";
 
 import { MiniCartSummaryGroup } from "./mini-cart-summary-group";
 
+import type { CartSummaryItem } from "@/server/cart/repository/get-cart-summary";
+
 const buildItem = (
   overrides: Partial<{
     id: string;
@@ -10,13 +12,16 @@ const buildItem = (
     quantity: number;
     title: string;
   }> = {},
-) => ({
+): CartSummaryItem => ({
   id: overrides.id ?? "item-1",
+  productId: "prod-1",
+  userId: "user-1",
   price: overrides.price ?? 500,
   quantity: overrides.quantity ?? 2,
   product: {
     id: "prod-1",
     title: overrides.title ?? "Burger",
+    price: overrides.price ?? 500,
     image: null,
   },
 });
