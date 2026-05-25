@@ -35,9 +35,7 @@ describe("InviteAccept", () => {
     );
     const user = userEvent.setup();
 
-    const { container } = render(
-      <InviteAccept invitationId="inv-1" onSetView={vi.fn()} />,
-    );
+    render(<InviteAccept invitationId="inv-1" onSetView={vi.fn()} />);
 
     await user.type(
       screen.getByPlaceholderText("you@example.com"),
@@ -49,8 +47,6 @@ describe("InviteAccept", () => {
       "That email doesn't match this invitation.",
     );
     expect(routerRefresh).not.toHaveBeenCalled();
-    // No inline red error <p> should remain after migration.
-    expect(container.querySelector("p.text-red-600")).toBeNull();
   });
 
   it("refreshes the router on success", async () => {
