@@ -12,6 +12,20 @@ export interface CartParticipantGroup {
   subtotal: number;
 }
 
+export interface CartSummaryItem {
+  id: string;
+  productId: string;
+  userId: string;
+  quantity: number;
+  price: number;
+  product: {
+    id: string;
+    title: string;
+    price: number;
+    image: string | null;
+  };
+}
+
 export type CartSummaryView =
   | { kind: "solo"; items: CartSummaryItem[] }
   | { kind: "group"; groups: CartParticipantGroup[] };
