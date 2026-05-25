@@ -4,7 +4,7 @@ import { db } from "@/server/db";
 import { cartInvitation } from "@/server/db/schema";
 import type { InvitationStatus } from "@/server/invitations/types";
 import { getCurrentUserId } from "@/server/auth/get-current-user-id";
-import { findCartIdByUserId } from "@/server/cart/repository/find-cart-id-by-user";
+import { findActiveCartIdByUser } from "@/server/cart/repository/find-active-cart-id-by-user";
 
 export interface InvitationItem {
   id: string;
@@ -19,10 +19,10 @@ export const getInvitationsByCartId = async (): Promise<
   const userId = await getCurrentUserId();
 
   if (!userId) {
-    throw null;
+    return null;
   }
 
-  const existingCartId = await findCartIdByUserId(userId);
+  const existingCartId = await findActiveCartIdByUser(userId);
 
   if (!existingCartId) {
     return null;

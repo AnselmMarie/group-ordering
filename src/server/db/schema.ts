@@ -7,6 +7,7 @@ import {
   primaryKey,
   text,
   unique,
+  uniqueIndex,
   uuid,
 } from "drizzle-orm/pg-core";
 
@@ -91,9 +92,25 @@ export const cartParticipant = pgTable(
     userId: uuid("user_id")
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
-    joinedAt: ts("joined_at").notNull().defaultNow(),
+    status: text("status").notNull().default("active"),
+    role: text("role").notNull().default("editor"),
+    createdAt: ts("created_at").notNull().defaultNow(),
+    updatedAt: ts("updated_at").notNull().defaultNow(),
   },
-  (table) => [primaryKey({ columns: [table.cartId, table.userId] })],
+  (table) => [
+    primaryKey({ columns: [table.cartId, table.userId] }),
+    check(
+      "cart_participant_status_check",
+      sql`${table.status} IN ('active','inactive')`,
+    ),
+    check(
+      "cart_participant_role_check",
+      sql`${table.role} IN ('editor','owner')`,
+    ),
+    uniqueIndex("cart_participant_user_active_unique")
+      .on(table.userId)
+      .where(sql`${table.status} = 'active'`),
+  ],
 );
 
 export const cartInvitation = pgTable(

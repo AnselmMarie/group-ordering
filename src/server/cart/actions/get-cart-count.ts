@@ -1,7 +1,7 @@
 "use server";
 
 import { countCartItems } from "@/server/cart/repository/count-cart-items";
-import { findCartIdByUserId } from "@/server/cart/repository/find-cart-id-by-user";
+import { findActiveCartIdByUser } from "@/server/cart/repository/find-active-cart-id-by-user";
 import { getCurrentUserId } from "@/server/auth/get-current-user-id";
 
 export const getCartCount = async (): Promise<number> => {
@@ -11,7 +11,7 @@ export const getCartCount = async (): Promise<number> => {
     return 0;
   }
 
-  const cartId = await findCartIdByUserId(userId);
+  const cartId = await findActiveCartIdByUser(userId);
   if (!cartId) {
     return 0;
   }

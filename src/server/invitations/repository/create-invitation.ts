@@ -1,3 +1,5 @@
+import { revalidatePath } from "next/cache";
+
 import { db } from "@/server/db";
 import { cartInvitation } from "@/server/db/schema";
 import type { Invitation, InvitationStatus } from "@/server/invitations/types";
@@ -15,6 +17,9 @@ export const createInvitation = async ({
     .insert(cartInvitation)
     .values({ cartId, invitedEmail: email })
     .returning();
+
+  // @todo: enhancement to just revalidate the invite server calls
+  revalidatePath("/");
 
   return {
     id: row.id,

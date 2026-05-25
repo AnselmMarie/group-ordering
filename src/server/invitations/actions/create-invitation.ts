@@ -7,7 +7,7 @@ import {
   type CreateInvitationInput,
 } from "@/features/invitations/schema";
 import { getAppUrl } from "@/lib/env";
-import { findCartIdByUserId } from "@/server/cart/repository/find-cart-id-by-user";
+import { findActiveCartIdByUser } from "@/server/cart/repository/find-active-cart-id-by-user";
 import { getCurrentUserId } from "@/server/auth/get-current-user-id";
 import { getLogoUrl } from "@/server/email/email-assets";
 import { sendEmail } from "@/server/email/send-email";
@@ -29,7 +29,7 @@ export async function createInvitation(
     throw new Error("User is not found");
   }
 
-  const cartId = await findCartIdByUserId(userId);
+  const cartId = await findActiveCartIdByUser(userId);
   if (!cartId) {
     throw new Error("Cart is not found");
   }
