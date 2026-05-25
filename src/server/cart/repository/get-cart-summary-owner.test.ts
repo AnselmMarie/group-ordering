@@ -24,10 +24,10 @@ const buildJoinedRow = (overrides: Record<string, unknown> = {}) => ({
   itemProductId: MOCK_PRODUCT_ID,
   itemUserId: OWNER_USER_ID,
   itemQuantity: 2,
-  itemPrice: "10.00",
+  itemPrice: 1000,
   productId: MOCK_PRODUCT_ID,
   productTitle: "Espresso",
-  productPrice: "10.00",
+  productPrice: 1000,
   productImage: null,
   ...overrides,
 });
@@ -50,11 +50,11 @@ describe("getCartSummaryOwner", () => {
           productId: MOCK_PRODUCT_ID,
           userId: OWNER_USER_ID,
           quantity: 2,
-          price: "10.00",
+          price: 1000,
           product: {
             id: MOCK_PRODUCT_ID,
             title: "Espresso",
-            price: "10.00",
+            price: 1000,
             image: null,
           },
         },
@@ -94,8 +94,8 @@ describe("getCartSummaryOwner", () => {
           itemId: "00000000-0000-0000-0000-0000000000b1",
           itemUserId: BOB_USER_ID,
           itemQuantity: 1,
-          itemPrice: "5.00",
-          productPrice: "5.00",
+          itemPrice: 500,
+          productPrice: 500,
         }),
         buildJoinedRow(),
         buildJoinedRow({
@@ -105,8 +105,8 @@ describe("getCartSummaryOwner", () => {
           itemId: "00000000-0000-0000-0000-0000000000a2",
           itemUserId: ALICE_USER_ID,
           itemQuantity: 3,
-          itemPrice: "4.00",
-          productPrice: "4.00",
+          itemPrice: 400,
+          productPrice: 400,
         }),
       ]),
     );
@@ -120,9 +120,9 @@ describe("getCartSummaryOwner", () => {
       ALICE_USER_ID,
       BOB_USER_ID,
     ]);
-    expect(result.groups[0].subtotal).toBe(20);
-    expect(result.groups[1].subtotal).toBe(12);
-    expect(result.groups[2].subtotal).toBe(5);
+    expect(result.groups[0].subtotal).toBe(2000);
+    expect(result.groups[1].subtotal).toBe(1200);
+    expect(result.groups[2].subtotal).toBe(500);
   });
 
   it("owner group has invitedEmail null and editor group has invitedEmail populated", async () => {

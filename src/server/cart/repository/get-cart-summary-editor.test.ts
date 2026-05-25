@@ -29,11 +29,11 @@ describe("getCartSummaryEditor", () => {
       productId: MOCK_PRODUCT_ID,
       userId: EDITOR_USER_ID,
       quantity: 3,
-      price: "4.00",
+      price: 400,
       product: {
         id: MOCK_PRODUCT_ID,
         title: "Latte",
-        price: "4.00",
+        price: 400,
         image: null,
       },
     };

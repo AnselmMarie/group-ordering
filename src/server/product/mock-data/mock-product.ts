@@ -9,7 +9,7 @@ export const createMockProduct = (
 ): Product => ({
   id: MOCK_PRODUCT_ID,
   title: "Espresso",
-  price: "10.22",
+  price: 1022,
   image: null,
   createdAt: MOCK_DATE,
   updatedAt: MOCK_DATE,

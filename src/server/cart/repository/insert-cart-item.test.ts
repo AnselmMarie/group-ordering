@@ -20,7 +20,7 @@ const baseParams = {
   cartId: MOCK_CART_ID,
   productId: MOCK_PRODUCT_ID,
   userId: MOCK_USER_ID,
-  price: "9.99",
+  price: 999,
 };
 
 describe("insertCartItem", () => {
@@ -39,7 +39,7 @@ describe("insertCartItem", () => {
       cartId: MOCK_CART_ID,
       productId: MOCK_PRODUCT_ID,
       userId: MOCK_USER_ID,
-      price: "9.99",
+      price: 999,
       quantity: 1,
     });
   });

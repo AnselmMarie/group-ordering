@@ -98,7 +98,7 @@ export const getCartSummaryOwner = async (
         },
       };
       group.items.push(item);
-      group.subtotal += Number(row.itemPrice) * row.itemQuantity;
+      group.subtotal += row.itemPrice * row.itemQuantity;
     }
   }
 

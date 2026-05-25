@@ -10,11 +10,11 @@ export interface CartSummaryItem {
   productId: string;
   userId: string;
   quantity: number;
-  price: string;
+  price: number;
   product: {
     id: string;
     title: string;
-    price: string;
+    price: number;
     image: string | null;
   };
 }

@@ -1,3 +1,4 @@
+import { formatUSD } from "@/lib/money";
 import type { CartParticipantGroup } from "@/server/cart/repository/get-cart-summary-grouped";
 
 import { MiniCartSummaryItem } from "./mini-cart-summary-item";
@@ -38,7 +39,7 @@ export const MiniCartSummaryGroup = ({
 
           <div className="flex items-center justify-between text-sm">
             <span className="text-zinc-500 dark:text-zinc-400">Subtotal</span>
-            <span className="font-medium">${subtotal.toFixed(2)}</span>
+            <span className="font-medium">{formatUSD(subtotal)}</span>
           </div>
         </>
       )}
