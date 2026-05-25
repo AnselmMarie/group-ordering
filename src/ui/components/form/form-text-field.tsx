@@ -12,10 +12,12 @@ type FormTextFieldProps = Omit<
   "value" | "onChange" | "onBlur" | "name" | "defaultValue"
 > & {
   label?: string;
+  helperText?: string;
 };
 
 export const FormTextField = ({
   label,
+  helperText,
   id,
   className,
   ...inputProps
@@ -25,6 +27,11 @@ export const FormTextField = ({
   const hasError = errors.length > 0;
   const inputId = id ?? field.name;
   const errorId = `${inputId}-error`;
+  const helperId = `${inputId}-helper`;
+  const describedBy =
+    [hasError ? errorId : null, helperText ? helperId : null]
+      .filter(Boolean)
+      .join(" ") || undefined;
 
   return (
     <div className={cn("flex flex-col gap-1.5", className)}>
@@ -39,10 +46,15 @@ export const FormTextField = ({
         name={field.name}
         value={field.state.value ?? ""}
         aria-invalid={hasError || undefined}
-        aria-describedby={hasError ? errorId : undefined}
+        aria-describedby={describedBy}
         onBlur={field.handleBlur}
         onChange={(event) => field.handleChange(event.target.value)}
       />
+      {helperText && (
+        <p id={helperId} className="text-xs text-zinc-500 dark:text-zinc-400">
+          {helperText}
+        </p>
+      )}
       {hasError && (
         <p id={errorId} className="text-xs text-destructive">
           {errors

@@ -20,8 +20,9 @@ export const GroupOrder = ({
     validators: {
       onChange: createInvitationSchema,
     },
-    onSubmit: async ({ value }) => {
+    onSubmit: async ({ value, formApi }) => {
       await createInvitation(value);
+      formApi.setFieldValue("email", "");
     },
   });
 
@@ -45,7 +46,12 @@ export const GroupOrder = ({
           }}
         >
           <form.AppField name="name">
-            {(f) => <f.TextField label="Your Name" />}
+            {(f) => (
+              <f.TextField
+                label="Your Name"
+                helperText="This is to let the invited user know who sent the invite"
+              />
+            )}
           </form.AppField>
           <form.AppField name="email">
             {(f) => <f.TextField label="Email" />}
