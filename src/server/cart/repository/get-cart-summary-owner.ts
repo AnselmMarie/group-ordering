@@ -13,7 +13,7 @@ import {
 import type {
   CartParticipantGroup,
   CartSummaryView,
-} from "./get-cart-summary-grouped";
+} from "./get-cart-summary-view";
 
 const isParticipantRole = (value: string): value is CartParticipantRole =>
   value === "owner" || value === "editor";

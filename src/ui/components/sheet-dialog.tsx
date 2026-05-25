@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 import {
   Sheet,
   SheetContent,
@@ -7,6 +5,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/ui/shadcn/sheet";
+import { ScrollArea } from "@/ui/shadcn/scroll-area";
 
 interface SheetDialogProps {
   title: string;
@@ -29,7 +28,9 @@ export const SheetDialog = ({
           <SheetTitle>{title}</SheetTitle>
           <SheetDescription>{description}</SheetDescription>
         </SheetHeader>
-        <div className="px-4 text-sm text-muted-foreground">{children}</div>
+        <div className="flex-1 min-h-0 text-sm text-muted-foreground">
+          <ScrollArea className="h-full px-4">{children}</ScrollArea>
+        </div>
       </SheetContent>
     </Sheet>
   );

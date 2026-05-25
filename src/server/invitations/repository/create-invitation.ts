@@ -1,8 +1,9 @@
-import { sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
 import { db } from "@/server/db";
+import { cartInvitation } from "@/server/db/schema";
 import { MAX_ACTIVE_INVITES } from "@/server/invitations/constants";
+import { countActiveInvitations } from "@/server/invitations/repository/count-active-invitations";
 import type { Invitation, InvitationStatus } from "@/server/invitations/types";
 
 interface CreateInvitationParams {
@@ -10,48 +11,28 @@ interface CreateInvitationParams {
   email: string;
 }
 
-interface CreateInvitationRow {
-  id: string;
-  cart_id: string;
-  invited_email: string;
-  status: string;
-  accepted_by_user_id: string | null;
-  created_at: Date;
-  updated_at: Date;
-}
-
-const extractRows = (
-  result: unknown,
-): readonly CreateInvitationRow[] => {
-  if (Array.isArray(result)) {
-    return result as CreateInvitationRow[];
-  }
-  if (result && typeof result === "object" && "rows" in result) {
-    return (result as { rows: CreateInvitationRow[] }).rows;
-  }
-  return [];
-};
-
 export const createInvitation = async ({
   cartId,
   email,
 }: CreateInvitationParams): Promise<Invitation> => {
-  const result = await db.execute(sql`
-    INSERT INTO cart_invitation (cart_id, invited_email)
-    SELECT ${cartId}::uuid, ${email}
-    WHERE (
-      SELECT count(*) FROM cart_invitation
-      WHERE cart_id = ${cartId}::uuid
-        AND status IN ('pending', 'accepted')
-    ) < ${MAX_ACTIVE_INVITES}
-    RETURNING id, cart_id, invited_email, status, accepted_by_user_id, created_at, updated_at
-  `);
+  const row = await db.transaction(async (tx) => {
+    const activeCount = await countActiveInvitations(cartId, tx);
+    if (activeCount >= MAX_ACTIVE_INVITES) {
+      throw new Error(
+        `Invite limit reached. You can have at most ${MAX_ACTIVE_INVITES} active invites.`,
+      );
+    }
 
-  const row = extractRows(result)[0];
+    const [inserted] = await tx
+      .insert(cartInvitation)
+      .values({ cartId, invitedEmail: email })
+      .returning();
+
+    return inserted;
+  });
+
   if (!row) {
-    throw new Error(
-      `Invite limit reached. You can have at most ${MAX_ACTIVE_INVITES} active invites.`,
-    );
+    throw new Error("Failed to create invitation.");
   }
 
   // @todo: enhancement to just revalidate the invite server calls
@@ -59,11 +40,11 @@ export const createInvitation = async ({
 
   return {
     id: row.id,
-    cartId: row.cart_id,
-    invitedEmail: row.invited_email,
+    cartId: row.cartId,
+    invitedEmail: row.invitedEmail,
     status: row.status as InvitationStatus,
-    acceptedByUserId: row.accepted_by_user_id,
-    createdAt: row.created_at,
-    updatedAt: row.updated_at,
+    acceptedByUserId: row.acceptedByUserId,
+    createdAt: row.createdAt,
+    updatedAt: row.updatedAt,
   };
 };

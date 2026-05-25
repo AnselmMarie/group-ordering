@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { db } from "@/server/db";
-import { MOCK_CART_ID } from "@/server/cart/mock-data/ids";
+import { MOCK_CART_ID, MOCK_USER_ID } from "@/server/cart/mock-data/ids";
 import { createChainStub } from "@/server/db/mock-db";
 
 import { countCartItems } from "./count-cart-items";
@@ -40,6 +40,20 @@ describe("countCartItems", () => {
     const result = await countCartItems(MOCK_CART_ID);
 
     expect(result).toBe(0);
+  });
+
+  it("applies a where clause when userId is provided", async () => {
+    const chain = createChainStub([{ total: 3 }]);
+    mockedDb.select.mockReturnValue(
+      chain as unknown as ReturnType<typeof db.select>,
+    );
+
+    const result = await countCartItems(MOCK_CART_ID, MOCK_USER_ID);
+
+    expect(result).toBe(3);
+    expect(chain.where).toHaveBeenCalledTimes(1);
+    const whereArg = chain.where.mock.calls[0]?.[0];
+    expect(whereArg).toBeDefined();
   });
 
   it("propagates database errors", async () => {
