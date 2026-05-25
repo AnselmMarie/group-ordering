@@ -9,9 +9,3 @@ export interface Invitation {
   createdAt: Date;
   updatedAt: Date;
 }
-
-export interface CreateInvitationPayload {
-  cartId: string;
-  email: string;
-  inviterName: string;
-}

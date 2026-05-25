@@ -75,7 +75,7 @@ export const product = pgTable("product", {
 
 export const cart = pgTable("cart", {
   id: pk(),
-  hostUserId: uuid("host_user_id")
+  userId: uuid("user_id")
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
   status: text("status").notNull().default("open"),

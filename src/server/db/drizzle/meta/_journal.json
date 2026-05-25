@@ -57,6 +57,13 @@
       "when": 1779689755715,
       "tag": "0007_curved_deathstrike",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1779728512065,
+      "tag": "0008_outgoing_marvel_boy",
+      "breakpoints": true
     }
   ]
 }
