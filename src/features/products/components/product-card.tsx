@@ -7,6 +7,7 @@ import {
 } from "@/ui/shadcn/card";
 
 import { AddToCartButton } from "@/features/cart/components/add-to-cart-button";
+import { formatUSD } from "@/lib/money";
 import type { Product } from "@/server/product/types";
 
 interface ProductCardProps {
@@ -28,7 +29,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
       </CardHeader>
       <CardContent>
         <p className="text-lg font-semibold">
-          ${Number(product.price).toFixed(2)}
+          {formatUSD(product.price)}
         </p>
       </CardContent>
       <CardFooter>

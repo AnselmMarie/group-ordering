@@ -1,4 +1,4 @@
-import { numeric, timestamp, uuid } from "drizzle-orm/pg-core";
+import { integer, timestamp, uuid } from "drizzle-orm/pg-core";
 import { v7 as uuidv7 } from "uuid";
 
 export const ts = (name: string) =>
@@ -6,5 +6,4 @@ export const ts = (name: string) =>
 
 export const pk = () => uuid("id").primaryKey().$defaultFn(uuidv7);
 
-export const money = (name: string) =>
-  numeric(name, { precision: 10, scale: 2 });
+export const money = (name: string) => integer(name);

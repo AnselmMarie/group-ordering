@@ -8,6 +8,7 @@ import { findCartItem } from "@/server/cart/repository/find-cart-item";
 import { incrementCartItem } from "@/server/cart/repository/increment-cart-item";
 import { insertCartItem } from "@/server/cart/repository/insert-cart-item";
 import { getCurrentUserId } from "@/server/auth/get-current-user-id";
+import { productFindById } from "@/server/product/repository/product-find-by-id";
 
 export const addToCart = async (productId: string): Promise<void> => {
   const userId = await getCurrentUserId();
@@ -28,8 +29,18 @@ export const addToCart = async (productId: string): Promise<void> => {
   if (existingItem) {
     await incrementCartItem({ cartId, productId, userId });
   } else {
-    // @todo: get price from products table
-    await insertCartItem({ cartId, productId, userId, price: "10.22" });
+    const product = await productFindById(productId);
+
+    if (!product) {
+      throw new Error("Product not found");
+    }
+
+    await insertCartItem({
+      cartId,
+      productId,
+      userId,
+      price: product.price,
+    });
   }
 
   revalidatePath("/");

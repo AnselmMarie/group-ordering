@@ -1,8 +1,8 @@
 import { CartSummaryItem } from "@/server/cart/repository/get-cart-summary";
+import { formatUSD } from "@/lib/money";
 
 export const MiniCartSummaryItem = (item: CartSummaryItem) => {
-  const unitPrice = Number(item.price);
-  const lineTotal = unitPrice * item.quantity;
+  const lineTotal = item.price * item.quantity;
 
   return (
     <div className="flex items-center gap-3">
@@ -19,11 +19,11 @@ export const MiniCartSummaryItem = (item: CartSummaryItem) => {
       <div className="flex-1">
         <p className="font-medium">{item.product.title}</p>
         <p className="text-sm text-zinc-500 dark:text-zinc-400">
-          {item.quantity} × ${unitPrice.toFixed(2)}
+          {item.quantity} × {formatUSD(item.price)}
         </p>
       </div>
 
-      <p className="font-medium">${lineTotal.toFixed(2)}</p>
+      <p className="font-medium">{formatUSD(lineTotal)}</p>
     </div>
   );
 };

@@ -1,3 +1,4 @@
+import { formatUSD } from "@/lib/money";
 import { getCartSummaryView } from "@/server/cart/repository/get-cart-summary-grouped";
 
 import { MiniCartSummaryGroup } from "./mini-cart-summary-group";
@@ -18,7 +19,7 @@ export const MiniCartSummary = async () => {
   // Handle solo cart
   if (view.kind === "solo") {
     const subtotal = view.items.reduce(
-      (acc, item) => acc + Number(item.price) * item.quantity,
+      (acc, item) => acc + item.price * item.quantity,
       0,
     );
 
@@ -32,7 +33,7 @@ export const MiniCartSummary = async () => {
 
         <div className="flex items-center justify-between border-t border-zinc-200 pt-4 dark:border-zinc-800">
           <span className="text-sm font-medium">Subtotal</span>
-          <span className="font-semibold">${subtotal.toFixed(2)}</span>
+          <span className="font-semibold">{formatUSD(subtotal)}</span>
         </div>
       </div>
     );
@@ -54,7 +55,7 @@ export const MiniCartSummary = async () => {
 
       <div className="flex items-center justify-between border-t border-zinc-200 pt-4 dark:border-zinc-800">
         <span className="text-sm font-medium">Total</span>
-        <span className="font-semibold">${grandTotal.toFixed(2)}</span>
+        <span className="font-semibold">{formatUSD(grandTotal)}</span>
       </div>
     </div>
   );

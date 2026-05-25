@@ -37,11 +37,11 @@ const buildRow = (
   productId: MOCK_PRODUCT_ID,
   userId: MOCK_USER_ID,
   quantity: 2,
-  price: "10.22",
+  price: 1022,
   product: {
     id: MOCK_PRODUCT_ID,
     title: "Espresso",
-    price: "10.22",
+    price: 1022,
     image: null,
   },
   ...overrides,
@@ -79,11 +79,11 @@ describe("getCartSummary", () => {
       buildRow({
         id: "00000000-0000-0000-0000-000000000031",
         quantity: 1,
-        price: "5.50",
+        price: 550,
         product: {
           id: "00000000-0000-0000-0000-000000000021",
           title: "Latte",
-          price: "5.50",
+          price: 550,
           image: "https://example.com/latte.jpg",
         },
       }),

@@ -5,7 +5,7 @@ interface InsertCartItemParams {
   cartId: string;
   productId: string;
   userId: string;
-  price: string;
+  price: number;
   quantity?: number;
 }
 
