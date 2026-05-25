@@ -7,7 +7,7 @@ import { getCartSummaryOwner } from "@/server/cart/repository/get-cart-summary-o
 
 import { getCartSummaryView } from "./get-cart-summary-view";
 
-vi.mock("@/server/cart/repository/find-active-cart-role", () => ({
+vi.mock("@/server/cart/repository/get-active-cart-role", () => ({
   getActiveCartRole: vi.fn(),
 }));
 vi.mock("@/server/cart/repository/get-cart-summary-editor", () => ({

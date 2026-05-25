@@ -24,7 +24,7 @@ vi.mock("@/server/invitations/repository/get-invitation-by-id", () => ({
 vi.mock("@/server/invitations/repository/update-invitation-status", () => ({
   updateInvitationStatus: vi.fn(),
 }));
-vi.mock("@/server/cart/repository/upsert-active-participant", () => ({
+vi.mock("@/server/cart/repository/create-active-participant", () => ({
   createActiveParticipant: vi.fn(),
 }));
 vi.mock("@/server/db", () => ({
@@ -62,8 +62,9 @@ describe("acceptInvitation", () => {
       email: MOCK_INVITED_EMAIL,
     });
 
-    expect(result.status).toBe("accepted");
-    expect(result.acceptedByUserId).toBe(MOCK_USER_ID);
+    if (!result.ok) throw new Error(`expected ok, got ${result.error}`);
+    expect(result.data.status).toBe("accepted");
+    expect(result.data.acceptedByUserId).toBe(MOCK_USER_ID);
 
     expect(mockedUpdateStatus).toHaveBeenCalledWith(
       {
@@ -94,73 +95,84 @@ describe("acceptInvitation", () => {
     expect(mockedUpsert).toHaveBeenCalledTimes(1);
   });
 
-  it("rejects on email mismatch and never starts a transaction", async () => {
+  it("returns failure on email mismatch and never starts a transaction", async () => {
     mockedFindById.mockResolvedValue(buildMockInvitation());
     mockedGetCurrentUserId.mockResolvedValue(MOCK_USER_ID);
 
-    await expect(
-      acceptInvitation({
-        id: MOCK_INVITATION_ID,
-        email: "different@example.com",
-      }),
-    ).rejects.toThrow("That email doesn't match this invitation.");
+    const result = await acceptInvitation({
+      id: MOCK_INVITATION_ID,
+      email: "different@example.com",
+    });
+
+    expect(result).toEqual({
+      ok: false,
+      error: "That email doesn't match this invitation.",
+    });
     expect(mockedDb.transaction).not.toHaveBeenCalled();
     expect(mockedUpdateStatus).not.toHaveBeenCalled();
     expect(mockedUpsert).not.toHaveBeenCalled();
   });
 
-  it("throws when invitation is not found", async () => {
+  it("returns failure when invitation is not found", async () => {
     mockedFindById.mockResolvedValue(null);
 
-    await expect(
-      acceptInvitation({
-        id: MOCK_INVITATION_ID,
-        email: MOCK_INVITED_EMAIL,
-      }),
-    ).rejects.toThrow("This invitation no longer exists.");
+    const result = await acceptInvitation({
+      id: MOCK_INVITATION_ID,
+      email: MOCK_INVITED_EMAIL,
+    });
+
+    expect(result).toEqual({
+      ok: false,
+      error: "This invitation no longer exists.",
+    });
     expect(mockedDb.transaction).not.toHaveBeenCalled();
   });
 
-  it("throws when invitation is already accepted", async () => {
+  it("returns failure when invitation is already accepted", async () => {
     mockedFindById.mockResolvedValue(
       buildMockInvitation({ status: "accepted" }),
     );
 
-    await expect(
-      acceptInvitation({
-        id: MOCK_INVITATION_ID,
-        email: MOCK_INVITED_EMAIL,
-      }),
-    ).rejects.toThrow("This invitation has already been accepted.");
+    const result = await acceptInvitation({
+      id: MOCK_INVITATION_ID,
+      email: MOCK_INVITED_EMAIL,
+    });
+
+    expect(result).toEqual({
+      ok: false,
+      error: "This invitation has already been accepted.",
+    });
     expect(mockedDb.transaction).not.toHaveBeenCalled();
   });
 
-  it("throws when there is no session", async () => {
+  it("returns failure when there is no session", async () => {
     mockedFindById.mockResolvedValue(buildMockInvitation());
     mockedGetCurrentUserId.mockResolvedValue(undefined);
 
-    await expect(
-      acceptInvitation({
-        id: MOCK_INVITATION_ID,
-        email: MOCK_INVITED_EMAIL,
-      }),
-    ).rejects.toThrow(
-      "We couldn't load your session. Please refresh and try again.",
-    );
+    const result = await acceptInvitation({
+      id: MOCK_INVITATION_ID,
+      email: MOCK_INVITED_EMAIL,
+    });
+
+    expect(result).toEqual({
+      ok: false,
+      error:
+        "We couldn't load your session. Please refresh the page. If the issue continues, clear your Better Auth cookies and try again.",
+    });
     expect(mockedDb.transaction).not.toHaveBeenCalled();
   });
 
-  it("propagates errors from the participant upsert", async () => {
+  it("returns failure when the participant upsert throws", async () => {
     mockedFindById.mockResolvedValue(buildMockInvitation());
     mockedGetCurrentUserId.mockResolvedValue(MOCK_USER_ID);
     setupTransaction();
     mockedUpsert.mockRejectedValueOnce(new Error("upsert failed"));
 
-    await expect(
-      acceptInvitation({
-        id: MOCK_INVITATION_ID,
-        email: MOCK_INVITED_EMAIL,
-      }),
-    ).rejects.toThrow("upsert failed");
+    const result = await acceptInvitation({
+      id: MOCK_INVITATION_ID,
+      email: MOCK_INVITED_EMAIL,
+    });
+
+    expect(result).toEqual({ ok: false, error: "Something went wrong" });
   });
 });

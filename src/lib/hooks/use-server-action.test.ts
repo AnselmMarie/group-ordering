@@ -16,8 +16,11 @@ describe("useServerAction", () => {
     toastError.mockClear();
   });
 
-  it("returns the action result and invokes onSuccess on success", async () => {
-    const action = vi.fn(async (x: number) => x * 2);
+  it("returns data and invokes onSuccess on ok result", async () => {
+    const action = vi.fn(async (x: number) => ({
+      ok: true as const,
+      data: x * 2,
+    }));
     const onSuccess = vi.fn();
 
     const { result } = renderHook(() =>
@@ -35,10 +38,11 @@ describe("useServerAction", () => {
     expect(toastError).not.toHaveBeenCalled();
   });
 
-  it("calls toast.error with the thrown Error message and resolves undefined", async () => {
-    const action = vi.fn(async () => {
-      throw new Error("This product is no longer available.");
-    });
+  it("calls toast.error with the returned error and resolves undefined", async () => {
+    const action = vi.fn(async () => ({
+      ok: false as const,
+      error: "This product is no longer available.",
+    }));
     const onSuccess = vi.fn();
 
     const { result } = renderHook(() =>
@@ -57,7 +61,7 @@ describe("useServerAction", () => {
     expect(onSuccess).not.toHaveBeenCalled();
   });
 
-  it("falls back to options.errorMessage when thrown value is not an Error", async () => {
+  it("falls back to options.errorMessage when an unexpected non-Error is thrown", async () => {
     const action = vi.fn(async () => {
       throw "string thrown";
     });
@@ -87,11 +91,25 @@ describe("useServerAction", () => {
     expect(toastError).toHaveBeenCalledWith("Something went wrong");
   });
 
+  it("toasts the thrown Error message for unexpected throws", async () => {
+    const action = vi.fn(async () => {
+      throw new Error("Network down");
+    });
+
+    const { result } = renderHook(() => useServerAction(action));
+
+    await act(async () => {
+      await result.current[0]();
+    });
+
+    expect(toastError).toHaveBeenCalledWith("Network down");
+  });
+
   it("toggles isPending while the action is running", async () => {
-    let resolveAction: ((value: string) => void) | undefined;
+    let resolveAction: ((value: { ok: true; data: string }) => void) | undefined;
     const action = vi.fn(
       () =>
-        new Promise<string>((resolve) => {
+        new Promise<{ ok: true; data: string }>((resolve) => {
           resolveAction = resolve;
         }),
     );
@@ -108,7 +126,7 @@ describe("useServerAction", () => {
     await waitFor(() => expect(result.current[1]).toBe(true));
 
     await act(async () => {
-      resolveAction?.("done");
+      resolveAction?.({ ok: true, data: "done" });
       await runPromise;
     });
 

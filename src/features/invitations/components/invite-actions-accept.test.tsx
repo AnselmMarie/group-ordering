@@ -30,9 +30,10 @@ describe("InviteAccept", () => {
   });
 
   it("toasts the friendly error and does not render inline error UI on rejection", async () => {
-    acceptInvitationMock.mockRejectedValue(
-      new Error("That email doesn't match this invitation."),
-    );
+    acceptInvitationMock.mockResolvedValue({
+      ok: false,
+      error: "That email doesn't match this invitation.",
+    });
     const user = userEvent.setup();
 
     render(<InviteAccept invitationId="inv-1" onSetView={vi.fn()} />);
@@ -50,7 +51,7 @@ describe("InviteAccept", () => {
   });
 
   it("refreshes the router on success", async () => {
-    acceptInvitationMock.mockResolvedValue({});
+    acceptInvitationMock.mockResolvedValue({ ok: true, data: {} });
     const user = userEvent.setup();
 
     render(<InviteAccept invitationId="inv-1" onSetView={vi.fn()} />);

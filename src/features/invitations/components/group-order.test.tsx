@@ -33,7 +33,10 @@ describe("GroupOrder", () => {
   });
 
   it("clears the email field on successful submit", async () => {
-    createInvitationMock.mockResolvedValue({ id: "inv-1" });
+    createInvitationMock.mockResolvedValue({
+      ok: true,
+      data: { id: "inv-1" },
+    });
     const user = userEvent.setup();
 
     render(<GroupOrder inviteStatus={null} />);
@@ -55,9 +58,10 @@ describe("GroupOrder", () => {
   });
 
   it("toasts the friendly error and keeps the email field on rejection", async () => {
-    createInvitationMock.mockRejectedValue(
-      new Error("We couldn't find your cart. Please refresh and try again."),
-    );
+    createInvitationMock.mockResolvedValue({
+      ok: false,
+      error: "We couldn't find your cart. Please refresh and try again.",
+    });
     const user = userEvent.setup();
 
     render(<GroupOrder inviteStatus={null} />);

@@ -1,4 +1,4 @@
-import { getCartCount } from "@/server/cart/actions/get-cart-count";
+import { getCartCount } from "@/server/cart/repository/get-cart-count";
 import { getActiveCartRole } from "@/server/cart/repository/get-active-cart-role";
 import { getAllProducts } from "@/server/product/repository/get-all-products";
 import { MiniCart } from "@/features/cart/components/mini-cart";

@@ -14,7 +14,7 @@ vi.mock("next/cache", () => ({
 vi.mock("@/server/db", () => ({
   db: { transaction: vi.fn() },
 }));
-vi.mock("@/server/invitations/repository/count-active-invitations", () => ({
+vi.mock("@/server/invitations/repository/get-count-active-invitations", () => ({
   getCountActiveInvitations: vi.fn(),
 }));
 

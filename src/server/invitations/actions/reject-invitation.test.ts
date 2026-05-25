@@ -27,28 +27,35 @@ describe("rejectInvitation", () => {
 
     const result = await rejectInvitation(MOCK_INVITATION_ID);
 
-    expect(result.status).toBe("rejected");
+    if (!result.ok) throw new Error(`expected ok, got ${result.error}`);
+    expect(result.data.status).toBe("rejected");
     expect(mockedUpdateStatus).toHaveBeenCalledWith({
       id: MOCK_INVITATION_ID,
       status: "rejected",
     });
   });
 
-  it("throws when invitation is not found", async () => {
+  it("returns failure when invitation is not found", async () => {
     mockedFindById.mockResolvedValue(null);
 
-    await expect(rejectInvitation(MOCK_INVITATION_ID)).rejects.toThrow(
-      "This invitation no longer exists.",
-    );
+    const result = await rejectInvitation(MOCK_INVITATION_ID);
+
+    expect(result).toEqual({
+      ok: false,
+      error: "This invitation no longer exists.",
+    });
   });
 
-  it("throws when invitation is already rejected", async () => {
+  it("returns failure when invitation is already rejected", async () => {
     mockedFindById.mockResolvedValue(
       buildMockInvitation({ status: "rejected" }),
     );
 
-    await expect(rejectInvitation(MOCK_INVITATION_ID)).rejects.toThrow(
-      "This invitation has already been rejected.",
-    );
+    const result = await rejectInvitation(MOCK_INVITATION_ID);
+
+    expect(result).toEqual({
+      ok: false,
+      error: "This invitation has already been rejected.",
+    });
   });
 });
