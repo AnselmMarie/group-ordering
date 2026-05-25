@@ -1,6 +1,6 @@
 import { and, eq } from "drizzle-orm";
 
-import type { CartSummaryItem } from "@/server/cart/repository/get-cart-summary";
+import type { CartSummaryItem } from "@/server/cart/repository/get-cart-summary-view";
 import type { CartParticipantRole } from "@/server/cart/types";
 import { db } from "@/server/db";
 import {

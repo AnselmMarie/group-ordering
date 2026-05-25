@@ -1,5 +1,4 @@
 import { getActiveCartRole } from "@/server/cart/repository/get-active-cart-role";
-import type { CartSummaryItem } from "@/server/cart/repository/get-cart-summary";
 import { getCartSummaryEditor } from "@/server/cart/repository/get-cart-summary-editor";
 import { getCartSummaryOwner } from "@/server/cart/repository/get-cart-summary-owner";
 import type { CartParticipantRole } from "@/server/cart/types";
