@@ -3,7 +3,7 @@ import { and, eq, inArray, sql } from "drizzle-orm";
 import { db, type TxOrDb } from "@/server/db";
 import { cartInvitation } from "@/server/db/schema";
 
-export const countActiveInvitations = async (
+export const getCountActiveInvitations = async (
   cartId: string,
   tx: TxOrDb = db,
 ): Promise<number> => {

@@ -5,7 +5,7 @@ import { product } from "@/server/db/schema";
 
 import type { Product } from "../types";
 
-export const productFindById = async (id: string): Promise<Product | null> => {
+export const getProductById = async (id: string): Promise<Product | null> => {
   const rows = await db
     .select()
     .from(product)

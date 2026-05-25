@@ -1,11 +1,15 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { MOCK_CART_ID, MOCK_USER_ID } from "@/server/cart/mock-data/ids";
-import { createChainStub, createMockDb, type MockDb } from "@/server/db/mock-db";
+import {
+  createChainStub,
+  createMockDb,
+  type MockDb,
+} from "@/server/db/mock-db";
 
-import { upsertActiveParticipant } from "./upsert-active-participant";
+import { createActiveParticipant } from "./create-active-participant";
 
-describe("upsertActiveParticipant", () => {
+describe("createActiveParticipant", () => {
   let tx: MockDb;
 
   beforeEach(() => {
@@ -18,7 +22,7 @@ describe("upsertActiveParticipant", () => {
     tx.update.mockReturnValue(updateChain);
     tx.insert.mockReturnValue(insertChain);
 
-    await upsertActiveParticipant(tx as never, {
+    await createActiveParticipant(tx as never, {
       cartId: MOCK_CART_ID,
       userId: MOCK_USER_ID,
       role: "owner",
@@ -47,7 +51,7 @@ describe("upsertActiveParticipant", () => {
     const insertChain = createChainStub(undefined);
     tx.insert.mockReturnValue(insertChain);
 
-    await upsertActiveParticipant(tx as never, {
+    await createActiveParticipant(tx as never, {
       cartId: MOCK_CART_ID,
       userId: MOCK_USER_ID,
       role: "editor",
@@ -70,7 +74,7 @@ describe("upsertActiveParticipant", () => {
     tx.update.mockReturnValue(createChainStub(null, dbError));
 
     await expect(
-      upsertActiveParticipant(tx as never, {
+      createActiveParticipant(tx as never, {
         cartId: MOCK_CART_ID,
         userId: MOCK_USER_ID,
         role: "owner",
@@ -86,7 +90,7 @@ describe("upsertActiveParticipant", () => {
     tx.insert.mockReturnValue(createChainStub(null, dbError));
 
     await expect(
-      upsertActiveParticipant(tx as never, {
+      createActiveParticipant(tx as never, {
         cartId: MOCK_CART_ID,
         userId: MOCK_USER_ID,
         role: "editor",

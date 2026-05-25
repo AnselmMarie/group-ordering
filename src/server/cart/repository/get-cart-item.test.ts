@@ -9,7 +9,7 @@ import {
 } from "@/server/cart/mock-data/ids";
 import { createChainStub } from "@/server/db/mock-db";
 
-import { findCartItem } from "./find-cart-item";
+import { getCartItem } from "./get-cart-item";
 
 vi.mock("@/server/db", () => ({
   db: { select: vi.fn(), insert: vi.fn(), update: vi.fn() },
@@ -23,7 +23,7 @@ const params = {
   userId: MOCK_USER_ID,
 };
 
-describe("findCartItem", () => {
+describe("getCartItem", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -33,7 +33,7 @@ describe("findCartItem", () => {
       createChainStub([{ id: MOCK_CART_ITEM_ID }]),
     );
 
-    const result = await findCartItem(params);
+    const result = await getCartItem(params);
 
     expect(result).toEqual({ id: MOCK_CART_ITEM_ID });
     expect(mockedDb.select).toHaveBeenCalledTimes(1);
@@ -42,7 +42,7 @@ describe("findCartItem", () => {
   it("returns null when no row is found", async () => {
     mockedDb.select.mockReturnValue(createChainStub([]));
 
-    const result = await findCartItem(params);
+    const result = await getCartItem(params);
 
     expect(result).toBeNull();
   });
@@ -51,6 +51,6 @@ describe("findCartItem", () => {
     const dbError = new Error("query failed");
     mockedDb.select.mockReturnValue(createChainStub(null, dbError));
 
-    await expect(findCartItem(params)).rejects.toThrow("query failed");
+    await expect(getCartItem(params)).rejects.toThrow("query failed");
   });
 });

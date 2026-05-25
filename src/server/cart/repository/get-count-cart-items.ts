@@ -3,7 +3,7 @@ import { and, eq, sql } from "drizzle-orm";
 import { db } from "@/server/db";
 import { cartItem } from "@/server/db/schema";
 
-export const countCartItems = async (
+export const getCountCartItems = async (
   cartId: string,
   userId?: string,
 ): Promise<number> => {

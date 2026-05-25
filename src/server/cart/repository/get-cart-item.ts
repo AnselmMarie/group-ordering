@@ -3,17 +3,17 @@ import { and, eq } from "drizzle-orm";
 import { db } from "@/server/db";
 import { cartItem } from "@/server/db/schema";
 
-interface FindCartItemParams {
+interface GetCartItemParams {
   cartId: string;
   productId: string;
   userId: string;
 }
 
-export const findCartItem = async ({
+export const getCartItem = async ({
   cartId,
   productId,
   userId,
-}: FindCartItemParams): Promise<{ id: string } | null> => {
+}: GetCartItemParams): Promise<{ id: string } | null> => {
   const rows = await db
     .select({ id: cartItem.id })
     .from(cartItem)

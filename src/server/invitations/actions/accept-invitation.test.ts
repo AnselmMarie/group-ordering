@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { MOCK_CART_ID, MOCK_USER_ID } from "@/server/cart/mock-data/ids";
-import { upsertActiveParticipant } from "@/server/cart/repository/upsert-active-participant";
+import { createActiveParticipant } from "@/server/cart/repository/create-active-participant";
 import { getCurrentUserId } from "@/server/auth/get-current-user-id";
 import { db } from "@/server/db";
 import { createMockDb, type MockDb } from "@/server/db/mock-db";
@@ -25,7 +25,7 @@ vi.mock("@/server/invitations/repository/update-invitation-status", () => ({
   updateInvitationStatus: vi.fn(),
 }));
 vi.mock("@/server/cart/repository/upsert-active-participant", () => ({
-  upsertActiveParticipant: vi.fn(),
+  createActiveParticipant: vi.fn(),
 }));
 vi.mock("@/server/db", () => ({
   db: { transaction: vi.fn() },
@@ -34,7 +34,7 @@ vi.mock("@/server/db", () => ({
 const mockedGetCurrentUserId = vi.mocked(getCurrentUserId);
 const mockedFindById = vi.mocked(getInvitationById);
 const mockedUpdateStatus = vi.mocked(updateInvitationStatus);
-const mockedUpsert = vi.mocked(upsertActiveParticipant);
+const mockedUpsert = vi.mocked(createActiveParticipant);
 const mockedDb = vi.mocked(db) as unknown as {
   transaction: ReturnType<typeof vi.fn>;
 };
@@ -144,7 +144,9 @@ describe("acceptInvitation", () => {
         id: MOCK_INVITATION_ID,
         email: MOCK_INVITED_EMAIL,
       }),
-    ).rejects.toThrow("We couldn't load your session. Please refresh and try again.");
+    ).rejects.toThrow(
+      "We couldn't load your session. Please refresh and try again.",
+    );
     expect(mockedDb.transaction).not.toHaveBeenCalled();
   });
 

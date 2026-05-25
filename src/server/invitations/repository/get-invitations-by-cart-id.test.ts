@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { MOCK_CART_ID } from "@/server/cart/mock-data/ids";
-import { findActiveCartIdByUser } from "@/server/cart/repository/find-active-cart-id-by-user";
+import { getActiveCartIdByUser } from "@/server/cart/repository/get-active-cart-id-by-user";
 import { db } from "@/server/db";
 import { createChainStub } from "@/server/db/mock-db";
 import { getCurrentUserId } from "@/server/auth/get-current-user-id";
@@ -15,12 +15,12 @@ vi.mock("@/server/auth/get-current-user-id", () => ({
   getCurrentUserId: vi.fn(),
 }));
 vi.mock("@/server/cart/repository/find-active-cart-id-by-user", () => ({
-  findActiveCartIdByUser: vi.fn(),
+  getActiveCartIdByUser: vi.fn(),
 }));
 
 const mockedDb = vi.mocked(db);
 const mockedGetCurrentUserId = vi.mocked(getCurrentUserId);
-const mockedFindActiveCartIdByUser = vi.mocked(findActiveCartIdByUser);
+const mockedgetActiveCartIdByUser = vi.mocked(getActiveCartIdByUser);
 
 const USER_ID = "user-1";
 
@@ -35,13 +35,13 @@ describe("getInvitationsByCartId", () => {
     const result = await getInvitationsByCartId();
 
     expect(result).toBeNull();
-    expect(mockedFindActiveCartIdByUser).not.toHaveBeenCalled();
+    expect(mockedgetActiveCartIdByUser).not.toHaveBeenCalled();
     expect(mockedDb.select).not.toHaveBeenCalled();
   });
 
   it("returns null when the user has no active cart", async () => {
     mockedGetCurrentUserId.mockResolvedValueOnce(USER_ID);
-    mockedFindActiveCartIdByUser.mockResolvedValueOnce(null);
+    mockedgetActiveCartIdByUser.mockResolvedValueOnce(null);
 
     const result = await getInvitationsByCartId();
 
@@ -51,7 +51,7 @@ describe("getInvitationsByCartId", () => {
 
   it("returns null when no invitation rows are found", async () => {
     mockedGetCurrentUserId.mockResolvedValueOnce(USER_ID);
-    mockedFindActiveCartIdByUser.mockResolvedValueOnce(MOCK_CART_ID);
+    mockedgetActiveCartIdByUser.mockResolvedValueOnce(MOCK_CART_ID);
     mockedDb.select.mockReturnValue(createChainStub([]) as never);
 
     const result = await getInvitationsByCartId();
@@ -61,7 +61,7 @@ describe("getInvitationsByCartId", () => {
 
   it("returns mapped rows with status cast to InvitationStatus", async () => {
     mockedGetCurrentUserId.mockResolvedValueOnce(USER_ID);
-    mockedFindActiveCartIdByUser.mockResolvedValueOnce(MOCK_CART_ID);
+    mockedgetActiveCartIdByUser.mockResolvedValueOnce(MOCK_CART_ID);
     const rows = [
       {
         id: "inv-1",
@@ -86,7 +86,7 @@ describe("getInvitationsByCartId", () => {
 
   it("propagates database errors", async () => {
     mockedGetCurrentUserId.mockResolvedValueOnce(USER_ID);
-    mockedFindActiveCartIdByUser.mockResolvedValueOnce(MOCK_CART_ID);
+    mockedgetActiveCartIdByUser.mockResolvedValueOnce(MOCK_CART_ID);
     mockedDb.select.mockReturnValue(
       createChainStub(null, new Error("select failed")) as never,
     );

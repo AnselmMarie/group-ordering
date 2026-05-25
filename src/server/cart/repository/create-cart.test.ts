@@ -2,28 +2,37 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { db } from "@/server/db";
 import { MOCK_CART_ID, MOCK_USER_ID } from "@/server/cart/mock-data/ids";
-import { createChainStub, createMockDb, type MockDb } from "@/server/db/mock-db";
+import {
+  createChainStub,
+  createMockDb,
+  type MockDb,
+} from "@/server/db/mock-db";
 
 import { createCart } from "./create-cart";
-import { upsertActiveParticipant } from "./upsert-active-participant";
+import { createActiveParticipant } from "./create-active-participant";
 
 vi.mock("@/server/db", () => ({
   db: { transaction: vi.fn() },
 }));
 
 vi.mock("./upsert-active-participant", () => ({
-  upsertActiveParticipant: vi.fn(),
+  createActiveParticipant: vi.fn(),
 }));
 
-const mockedDb = vi.mocked(db) as unknown as { transaction: ReturnType<typeof vi.fn> };
-const mockedUpsert = vi.mocked(upsertActiveParticipant);
+const mockedDb = vi.mocked(db) as unknown as {
+  transaction: ReturnType<typeof vi.fn>;
+};
+const mockedUpsert = vi.mocked(createActiveParticipant);
 
 interface TxRun {
   tx: MockDb;
   insertChain: ReturnType<typeof createChainStub>;
 }
 
-const setupTransaction = (insertResult: unknown, insertError?: Error): TxRun => {
+const setupTransaction = (
+  insertResult: unknown,
+  insertError?: Error,
+): TxRun => {
   const tx = createMockDb();
   const insertChain = createChainStub(insertResult, insertError);
   tx.insert.mockReturnValue(insertChain);

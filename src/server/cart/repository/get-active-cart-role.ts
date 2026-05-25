@@ -1,7 +1,7 @@
 import { and, eq } from "drizzle-orm";
 
 import { getCurrentUserId } from "@/server/auth/get-current-user-id";
-import { findActiveCartIdByUser } from "@/server/cart/repository/find-active-cart-id-by-user";
+import { getActiveCartIdByUser } from "@/server/cart/repository/get-active-cart-id-by-user";
 import type { CartParticipantRole } from "@/server/cart/types";
 import { db } from "@/server/db";
 import { cartParticipant } from "@/server/db/schema";
@@ -12,13 +12,13 @@ export interface ActiveCartRole {
   role: CartParticipantRole;
 }
 
-export const findActiveCartRole = async (): Promise<ActiveCartRole | null> => {
+export const getActiveCartRole = async (): Promise<ActiveCartRole | null> => {
   const userId = await getCurrentUserId();
   if (!userId) {
     return null;
   }
 
-  const cartId = await findActiveCartIdByUser(userId);
+  const cartId = await getActiveCartIdByUser(userId);
   if (!cartId) {
     return null;
   }

@@ -3,17 +3,17 @@ import { and, eq, sql } from "drizzle-orm";
 import { db } from "@/server/db";
 import { cartItem } from "@/server/db/schema";
 
-interface IncrementCartItemParams {
+interface UpdateCartItemParams {
   cartId: string;
   productId: string;
   userId: string;
 }
 
-export const incrementCartItem = async ({
+export const updateCartItem = async ({
   cartId,
   productId,
   userId,
-}: IncrementCartItemParams): Promise<void> => {
+}: UpdateCartItemParams): Promise<void> => {
   await db
     .update(cartItem)
     .set({ quantity: sql`${cartItem.quantity} + 1` })

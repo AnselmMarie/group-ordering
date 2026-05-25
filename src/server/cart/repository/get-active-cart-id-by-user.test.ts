@@ -4,7 +4,7 @@ import { db } from "@/server/db";
 import { MOCK_CART_ID, MOCK_USER_ID } from "@/server/cart/mock-data/ids";
 import { createChainStub } from "@/server/db/mock-db";
 
-import { findActiveCartIdByUser } from "./find-active-cart-id-by-user";
+import { getActiveCartIdByUser } from "./get-active-cart-id-by-user";
 
 vi.mock("@/server/db", () => ({
   db: { select: vi.fn(), insert: vi.fn(), update: vi.fn() },
@@ -12,7 +12,7 @@ vi.mock("@/server/db", () => ({
 
 const mockedDb = vi.mocked(db);
 
-describe("findActiveCartIdByUser", () => {
+describe("getActiveCartIdByUser", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -22,7 +22,7 @@ describe("findActiveCartIdByUser", () => {
       createChainStub([{ cartId: MOCK_CART_ID }]),
     );
 
-    const result = await findActiveCartIdByUser(MOCK_USER_ID);
+    const result = await getActiveCartIdByUser(MOCK_USER_ID);
 
     expect(result).toBe(MOCK_CART_ID);
     expect(mockedDb.select).toHaveBeenCalledTimes(1);
@@ -31,7 +31,7 @@ describe("findActiveCartIdByUser", () => {
   it("returns null when no rows are returned", async () => {
     mockedDb.select.mockReturnValue(createChainStub([]));
 
-    const result = await findActiveCartIdByUser(MOCK_USER_ID);
+    const result = await getActiveCartIdByUser(MOCK_USER_ID);
 
     expect(result).toBeNull();
   });
@@ -40,7 +40,7 @@ describe("findActiveCartIdByUser", () => {
     const dbError = new Error("connection refused");
     mockedDb.select.mockReturnValue(createChainStub(null, dbError));
 
-    await expect(findActiveCartIdByUser(MOCK_USER_ID)).rejects.toThrow(
+    await expect(getActiveCartIdByUser(MOCK_USER_ID)).rejects.toThrow(
       "connection refused",
     );
   });

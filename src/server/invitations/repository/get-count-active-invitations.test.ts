@@ -4,7 +4,7 @@ import { db } from "@/server/db";
 import { MOCK_CART_ID } from "@/server/cart/mock-data/ids";
 import { createChainStub } from "@/server/db/mock-db";
 
-import { countActiveInvitations } from "./count-active-invitations";
+import { getCountActiveInvitations } from "./get-count-active-invitations";
 
 vi.mock("@/server/db", () => ({
   db: { select: vi.fn(), insert: vi.fn(), update: vi.fn() },
@@ -12,7 +12,7 @@ vi.mock("@/server/db", () => ({
 
 const mockedDb = vi.mocked(db);
 
-describe("countActiveInvitations", () => {
+describe("getCountActiveInvitations", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -20,7 +20,7 @@ describe("countActiveInvitations", () => {
   it("returns the count from the first row", async () => {
     mockedDb.select.mockReturnValue(createChainStub([{ count: 3 }]));
 
-    const result = await countActiveInvitations(MOCK_CART_ID);
+    const result = await getCountActiveInvitations(MOCK_CART_ID);
 
     expect(result).toBe(3);
     expect(mockedDb.select).toHaveBeenCalledTimes(1);
@@ -29,7 +29,7 @@ describe("countActiveInvitations", () => {
   it("returns 0 when no rows are returned", async () => {
     mockedDb.select.mockReturnValue(createChainStub([]));
 
-    const result = await countActiveInvitations(MOCK_CART_ID);
+    const result = await getCountActiveInvitations(MOCK_CART_ID);
 
     expect(result).toBe(0);
   });
@@ -37,7 +37,7 @@ describe("countActiveInvitations", () => {
   it("returns 0 when count is null/undefined", async () => {
     mockedDb.select.mockReturnValue(createChainStub([{ count: null }]));
 
-    const result = await countActiveInvitations(MOCK_CART_ID);
+    const result = await getCountActiveInvitations(MOCK_CART_ID);
 
     expect(result).toBe(0);
   });
@@ -45,10 +45,10 @@ describe("countActiveInvitations", () => {
   it("uses the provided transaction handle when supplied", async () => {
     const txSelect = vi.fn().mockReturnValue(createChainStub([{ count: 2 }]));
     const tx = { select: txSelect } as unknown as Parameters<
-      typeof countActiveInvitations
+      typeof getCountActiveInvitations
     >[1];
 
-    const result = await countActiveInvitations(MOCK_CART_ID, tx);
+    const result = await getCountActiveInvitations(MOCK_CART_ID, tx);
 
     expect(result).toBe(2);
     expect(txSelect).toHaveBeenCalledTimes(1);
@@ -60,7 +60,7 @@ describe("countActiveInvitations", () => {
       createChainStub(null, new Error("count failed")),
     );
 
-    await expect(countActiveInvitations(MOCK_CART_ID)).rejects.toThrow(
+    await expect(getCountActiveInvitations(MOCK_CART_ID)).rejects.toThrow(
       "count failed",
     );
   });

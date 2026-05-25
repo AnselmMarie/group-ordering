@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm/sql/expressions/conditions";
 
-import { findActiveCartIdByUser } from "@/server/cart/repository/find-active-cart-id-by-user";
+import { getActiveCartIdByUser } from "@/server/cart/repository/get-active-cart-id-by-user";
 import { db } from "@/server/db";
 import { cartItem, product } from "@/server/db/schema";
 import { getCurrentUserId } from "@/server/auth/get-current-user-id";
@@ -26,7 +26,7 @@ export const getCartSummary = async (): Promise<CartSummaryItem[] | null> => {
     return null;
   }
 
-  const existingCartId = await findActiveCartIdByUser(userId);
+  const existingCartId = await getActiveCartIdByUser(userId);
 
   if (!existingCartId) {
     return null;

@@ -3,7 +3,7 @@ import { revalidatePath } from "next/cache";
 import { db } from "@/server/db";
 import { cartInvitation } from "@/server/db/schema";
 import { MAX_ACTIVE_INVITES } from "@/server/invitations/constants";
-import { countActiveInvitations } from "@/server/invitations/repository/count-active-invitations";
+import { getCountActiveInvitations } from "@/server/invitations/repository/get-count-active-invitations";
 import type { Invitation, InvitationStatus } from "@/server/invitations/types";
 
 interface CreateInvitationParams {
@@ -16,7 +16,7 @@ export const createInvitation = async ({
   email,
 }: CreateInvitationParams): Promise<Invitation> => {
   const row = await db.transaction(async (tx) => {
-    const activeCount = await countActiveInvitations(cartId, tx);
+    const activeCount = await getCountActiveInvitations(cartId, tx);
     if (activeCount >= MAX_ACTIVE_INVITES) {
       throw new Error(
         `Invite limit reached. You can have at most ${MAX_ACTIVE_INVITES} active invites.`,

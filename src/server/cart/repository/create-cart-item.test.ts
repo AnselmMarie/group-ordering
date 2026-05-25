@@ -8,7 +8,7 @@ import {
 } from "@/server/cart/mock-data/ids";
 import { createChainStub } from "@/server/db/mock-db";
 
-import { insertCartItem } from "./insert-cart-item";
+import { createCartItem } from "./create-cart-item";
 
 vi.mock("@/server/db", () => ({
   db: { select: vi.fn(), insert: vi.fn(), update: vi.fn() },
@@ -23,7 +23,7 @@ const baseParams = {
   price: 999,
 };
 
-describe("insertCartItem", () => {
+describe("createCartItem", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -32,7 +32,7 @@ describe("insertCartItem", () => {
     const chain = createChainStub([]);
     mockedDb.insert.mockReturnValue(chain as never);
 
-    await insertCartItem(baseParams);
+    await createCartItem(baseParams);
 
     expect(mockedDb.insert).toHaveBeenCalledTimes(1);
     expect(chain.values).toHaveBeenCalledWith({
@@ -48,7 +48,7 @@ describe("insertCartItem", () => {
     const chain = createChainStub([]);
     mockedDb.insert.mockReturnValue(chain as never);
 
-    await insertCartItem({ ...baseParams, quantity: 3 });
+    await createCartItem({ ...baseParams, quantity: 3 });
 
     expect(chain.values).toHaveBeenCalledWith(
       expect.objectContaining({ quantity: 3 }),
@@ -59,6 +59,6 @@ describe("insertCartItem", () => {
     const dbError = new Error("insert failed");
     mockedDb.insert.mockReturnValue(createChainStub(null, dbError) as never);
 
-    await expect(insertCartItem(baseParams)).rejects.toThrow("insert failed");
+    await expect(createCartItem(baseParams)).rejects.toThrow("insert failed");
   });
 });

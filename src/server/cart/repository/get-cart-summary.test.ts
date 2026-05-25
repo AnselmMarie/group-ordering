@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { getCurrentUserId } from "@/server/auth/get-current-user-id";
-import { findActiveCartIdByUser } from "@/server/cart/repository/find-active-cart-id-by-user";
+import { getActiveCartIdByUser } from "@/server/cart/repository/get-active-cart-id-by-user";
 import {
   MOCK_CART_ID,
   MOCK_CART_ITEM_ID,
@@ -11,23 +11,20 @@ import {
 import { createChainStub } from "@/server/db/mock-db";
 import { db } from "@/server/db";
 
-import {
-  type CartSummaryItem,
-  getCartSummary,
-} from "./get-cart-summary";
+import { type CartSummaryItem, getCartSummary } from "./get-cart-summary";
 
 vi.mock("@/server/auth/get-current-user-id", () => ({
   getCurrentUserId: vi.fn(),
 }));
 vi.mock("@/server/cart/repository/find-active-cart-id-by-user", () => ({
-  findActiveCartIdByUser: vi.fn(),
+  getActiveCartIdByUser: vi.fn(),
 }));
 vi.mock("@/server/db", () => ({
   db: { select: vi.fn(), insert: vi.fn(), update: vi.fn() },
 }));
 
 const mockedGetCurrentUserId = vi.mocked(getCurrentUserId);
-const mockedFindActiveCartIdByUser = vi.mocked(findActiveCartIdByUser);
+const mockedgetActiveCartIdByUser = vi.mocked(getActiveCartIdByUser);
 const mockedDb = vi.mocked(db);
 
 const buildRow = (
@@ -58,18 +55,18 @@ describe("getCartSummary", () => {
     const result = await getCartSummary();
 
     expect(result).toBeNull();
-    expect(mockedFindActiveCartIdByUser).not.toHaveBeenCalled();
+    expect(mockedgetActiveCartIdByUser).not.toHaveBeenCalled();
     expect(mockedDb.select).not.toHaveBeenCalled();
   });
 
   it("returns null when the user has no cart", async () => {
     mockedGetCurrentUserId.mockResolvedValue(MOCK_USER_ID);
-    mockedFindActiveCartIdByUser.mockResolvedValue(null);
+    mockedgetActiveCartIdByUser.mockResolvedValue(null);
 
     const result = await getCartSummary();
 
     expect(result).toBeNull();
-    expect(mockedFindActiveCartIdByUser).toHaveBeenCalledWith(MOCK_USER_ID);
+    expect(mockedgetActiveCartIdByUser).toHaveBeenCalledWith(MOCK_USER_ID);
     expect(mockedDb.select).not.toHaveBeenCalled();
   });
 
@@ -90,7 +87,7 @@ describe("getCartSummary", () => {
     ];
 
     mockedGetCurrentUserId.mockResolvedValue(MOCK_USER_ID);
-    mockedFindActiveCartIdByUser.mockResolvedValue(MOCK_CART_ID);
+    mockedgetActiveCartIdByUser.mockResolvedValue(MOCK_CART_ID);
     mockedDb.select.mockReturnValue(createChainStub(rows));
 
     const result = await getCartSummary();
@@ -101,7 +98,7 @@ describe("getCartSummary", () => {
 
   it("returns an empty array when the cart has no items", async () => {
     mockedGetCurrentUserId.mockResolvedValue(MOCK_USER_ID);
-    mockedFindActiveCartIdByUser.mockResolvedValue(MOCK_CART_ID);
+    mockedgetActiveCartIdByUser.mockResolvedValue(MOCK_CART_ID);
     mockedDb.select.mockReturnValue(createChainStub([]));
 
     const result = await getCartSummary();
@@ -111,7 +108,7 @@ describe("getCartSummary", () => {
 
   it("propagates database errors", async () => {
     mockedGetCurrentUserId.mockResolvedValue(MOCK_USER_ID);
-    mockedFindActiveCartIdByUser.mockResolvedValue(MOCK_CART_ID);
+    mockedgetActiveCartIdByUser.mockResolvedValue(MOCK_CART_ID);
     mockedDb.select.mockReturnValue(
       createChainStub(null, new Error("join failed")),
     );
