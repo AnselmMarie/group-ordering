@@ -13,15 +13,11 @@ export const MiniCartSummaryGroup = ({
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between bg-zinc-100 p-2 rounded-md dark:bg-zinc-800">
         <div className="flex items-center gap-2">
-          {isOwner ? (
-            <span className="rounded bg-zinc-100 px-1.5 py-0.5 text-xs font-medium text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">
-              Owner
-            </span>
-          ) : (
-            <p className="text-sm font-semibold">{invitedEmail}</p>
-          )}
+          <span className="text-sm font-semibold">
+            {isOwner ? "You" : invitedEmail}
+          </span>
         </div>
       </div>
 

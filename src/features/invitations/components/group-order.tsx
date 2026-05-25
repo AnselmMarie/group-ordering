@@ -44,6 +44,7 @@ export const GroupOrder = ({
         onOpenChange={setOpen}
       >
         <form
+          className="flex flex-col gap-4 mb-7"
           onSubmit={(e) => {
             e.preventDefault();
             form.handleSubmit();
@@ -53,7 +54,7 @@ export const GroupOrder = ({
             {(f) => (
               <f.TextField
                 label="Your Name"
-                helperText="This is to let the invited user know who sent the invite"
+                helperText="This is to let the invited user know who sent the invite."
               />
             )}
           </form.AppField>
