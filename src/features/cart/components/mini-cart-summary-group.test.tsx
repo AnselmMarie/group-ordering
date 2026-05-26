@@ -74,7 +74,7 @@ describe("MiniCartSummaryGroup", () => {
       />,
     );
 
-    expect(screen.getByText(/hasn't added any items yet/i)).toBeInTheDocument();
+    expect(screen.getByText(/No items were added yet/i)).toBeInTheDocument();
     expect(screen.queryByText("Subtotal")).not.toBeInTheDocument();
   });
 });

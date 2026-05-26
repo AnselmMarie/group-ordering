@@ -17,13 +17,13 @@ export default async function ProductListPage() {
     getActiveCartRole(),
   ]);
 
-  const isOwner = cartRole?.role === "owner";
-
   return (
     <Page>
       <Header
         groupOrder={
-          isOwner ? <GroupOrder inviteStatus={<InvitationStatus />} /> : null
+          cartRole?.role !== "editor" ? (
+            <GroupOrder inviteStatus={<InvitationStatus />} />
+          ) : null
         }
         miniCart={
           <MiniCart initialCount={cartCount} summary={<MiniCartSummary />} />

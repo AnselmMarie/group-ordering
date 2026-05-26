@@ -7,7 +7,7 @@ import { Button } from "@/ui/shadcn/button";
 import { SheetDialog } from "@/ui/components/sheet-dialog";
 import { useAppForm } from "@/ui/components/form/use-app-form";
 import { createInvitationSchema } from "@/features/invitations/schema";
-import { useServerAction } from "@/lib/hooks/use-server-action";
+import { useServerAction } from "@/hooks/use-server-action";
 import { createInvitation } from "@/server/invitations/actions/create-invitation";
 
 export const GroupOrder = ({

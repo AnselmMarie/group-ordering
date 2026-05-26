@@ -16,20 +16,20 @@ describe("InvitationStatus", () => {
     vi.clearAllMocks();
   });
 
-  it("renders the empty-state message when there are no invitations", async () => {
+  it("renders nothing when there are no invitations", async () => {
     mockedGetInvitationsByCartId.mockResolvedValueOnce(null);
 
-    render(await InvitationStatus());
+    const { container } = render(await InvitationStatus());
 
-    expect(screen.getByText(/didn't invite anyone yet/i)).toBeInTheDocument();
+    expect(container).toBeEmptyDOMElement();
   });
 
-  it("renders the empty-state message when invitation list is empty", async () => {
+  it("renders nothing when invitation list is empty", async () => {
     mockedGetInvitationsByCartId.mockResolvedValueOnce([]);
 
-    render(await InvitationStatus());
+    const { container } = render(await InvitationStatus());
 
-    expect(screen.getByText(/didn't invite anyone yet/i)).toBeInTheDocument();
+    expect(container).toBeEmptyDOMElement();
   });
 
   it("renders one entry per invitation by email", async () => {

@@ -13,7 +13,7 @@ const EmailFooter = () => {
   return (
     <Section style={styles.container}>
       <Text style={styles.text}>
-        &copy; {currentYear} Group Ordering. All rights reserved.
+        &copy; {currentYear} Seafood Shack. All rights reserved.
       </Text>
     </Section>
   );

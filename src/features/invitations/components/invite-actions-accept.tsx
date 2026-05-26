@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-import { useServerAction } from "@/lib/hooks/use-server-action";
+import { useServerAction } from "@/hooks/use-server-action";
 import { Button } from "@/ui/shadcn/button";
 import { Input } from "@/ui/shadcn/input";
 import { acceptInvitation } from "@/server/invitations/actions/accept-invitation";

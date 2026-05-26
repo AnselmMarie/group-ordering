@@ -13,7 +13,7 @@ const EmailHeader = ({ logoUrl }: EmailHeaderProps) => {
         src={logoUrl}
         width="161"
         height="25"
-        alt="Group Ordering"
+        alt="Seafood Shack Logo"
         style={styles.logo}
       />
     </Section>

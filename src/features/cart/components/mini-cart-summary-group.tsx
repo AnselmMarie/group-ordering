@@ -23,7 +23,7 @@ export const MiniCartSummaryGroup = ({
 
       {items.length === 0 ? (
         <p className="text-sm text-zinc-500 dark:text-zinc-400">
-          Hasn&apos;t added any items yet
+          No items were added yet
         </p>
       ) : (
         <>
