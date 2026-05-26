@@ -35,8 +35,8 @@ export const MiniCart = ({ initialCount, summary }: MiniCartProps) => {
       </Button>
 
       <SheetDialog
-        title="Your order"
-        description="Cart details will appear here."
+        title="Cart Summary"
+        description=""
         isOpen={open}
         onOpenChange={setOpen}
       >
