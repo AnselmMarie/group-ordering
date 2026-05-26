@@ -12,6 +12,8 @@ Click on this [link](https://group-ordering.vercel.app/) to access the deployed 
 
 No environment variables are required for the hosted version.
 
+Please note: Group order invite emails will come from notifications@cosmikata.com.
+
 or
 
 ### Local:
