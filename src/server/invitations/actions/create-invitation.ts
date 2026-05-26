@@ -11,6 +11,7 @@ import {
   UserFacingError,
   withActionResult,
 } from "@/lib/server/action-result";
+import { createCart } from "@/server/cart/repository/create-cart";
 import { getActiveCartIdByUser } from "@/server/cart/repository/get-active-cart-id-by-user";
 import { getCurrentUserId } from "@/server/auth/get-current-user-id";
 import { getLogoUrl } from "@/server/email/email-assets";
@@ -35,7 +36,8 @@ async function createInvitationImpl(
     );
   }
 
-  const cartId = await getActiveCartIdByUser(userId);
+  const existingCartId = await getActiveCartIdByUser(userId);
+  const cartId = existingCartId ?? (await createCart(userId));
   if (!cartId) {
     throw new UserFacingError(
       "We couldn't find your cart. Please refresh and try again.",
