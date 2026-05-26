@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { MOCK_CART_ID, MOCK_USER_ID } from "@/server/cart/mock-data/ids";
+import { createCart } from "@/server/cart/repository/create-cart";
 import { getActiveCartIdByUser } from "@/server/cart/repository/get-active-cart-id-by-user";
 import { getCurrentUserId } from "@/server/auth/get-current-user-id";
 import { sendEmail } from "@/server/email/send-email";
@@ -16,6 +17,9 @@ import { createInvitation } from "./create-invitation";
 vi.mock("@/server/auth/get-current-user-id", () => ({
   getCurrentUserId: vi.fn(),
 }));
+vi.mock("@/server/cart/repository/create-cart", () => ({
+  createCart: vi.fn(),
+}));
 vi.mock("@/server/cart/repository/get-active-cart-id-by-user", () => ({
   getActiveCartIdByUser: vi.fn(),
 }));
@@ -28,6 +32,7 @@ vi.mock("@/server/invitations/repository/create-invitation", () => ({
 
 const mockedGetCurrentUserId = vi.mocked(getCurrentUserId);
 const mockedgetActiveCartIdByUser = vi.mocked(getActiveCartIdByUser);
+const mockedCreateCart = vi.mocked(createCart);
 const mockedSendEmail = vi.mocked(sendEmail);
 const mockedCreateRow = vi.mocked(createInvitationRow);
 
@@ -88,9 +93,30 @@ describe("createInvitation", () => {
     expect(mockedCreateRow).not.toHaveBeenCalled();
   });
 
-  it("returns failure when the user has no cart", async () => {
+  it("creates a cart and proceeds when the user has no active cart", async () => {
+    const invitation = buildMockInvitation();
     mockedGetCurrentUserId.mockResolvedValue(MOCK_USER_ID);
     mockedgetActiveCartIdByUser.mockResolvedValue(null);
+    mockedCreateCart.mockResolvedValue(MOCK_CART_ID);
+    mockedCreateRow.mockResolvedValue(invitation);
+    mockedSendEmail.mockResolvedValue({ ok: true });
+
+    const result = await createInvitation(validInput);
+
+    expect(result).toEqual({ ok: true, data: invitation });
+    expect(mockedCreateCart).toHaveBeenCalledTimes(1);
+    expect(mockedCreateCart).toHaveBeenCalledWith(MOCK_USER_ID);
+    expect(mockedCreateRow).toHaveBeenCalledWith({
+      cartId: MOCK_CART_ID,
+      email: MOCK_INVITED_EMAIL,
+    });
+    expect(mockedSendEmail).toHaveBeenCalledTimes(1);
+  });
+
+  it("returns failure when the user has no cart and cart creation fails", async () => {
+    mockedGetCurrentUserId.mockResolvedValue(MOCK_USER_ID);
+    mockedgetActiveCartIdByUser.mockResolvedValue(null);
+    mockedCreateCart.mockResolvedValue(undefined);
 
     const result = await createInvitation(validInput);
 
@@ -98,6 +124,8 @@ describe("createInvitation", () => {
       ok: false,
       error: "We couldn't find your cart. Please refresh and try again.",
     });
+    expect(mockedCreateCart).toHaveBeenCalledTimes(1);
+    expect(mockedCreateCart).toHaveBeenCalledWith(MOCK_USER_ID);
     expect(mockedCreateRow).not.toHaveBeenCalled();
   });
 
