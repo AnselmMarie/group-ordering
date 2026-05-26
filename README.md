@@ -18,12 +18,18 @@ or
 
 ### Local:
 
+After cloning the repository and running:
+
+```bash
+pnpm install
+```
+
 Create a `.env` file and follow the values provided in `.env.example`. Some of the values you will need to create or modify.
 
 Then run the development server:
 
 ```bash
-  pnpm run dev
+pnpm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
@@ -92,6 +98,5 @@ While using AI, I relied on my engineering knowledge and experience to guide the
 - Refactor more files into smaller, more focused modules.
 - Adding WebSocket support so the host can receive real-time cart updates.
 - Create additional logic handling for more edge cases and failure scenarios.
-  (eg: When a session fails then automatically sign the user out and re-authenticating them. Display a toast if any cart data could not be recovered.)
 - Add loading states like skeleton loading.
 - Small but clean up the import order with ESLint.
