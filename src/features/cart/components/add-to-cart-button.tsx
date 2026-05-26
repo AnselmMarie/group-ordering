@@ -1,6 +1,6 @@
 "use client";
 
-import { useServerAction } from "@/lib/hooks/use-server-action";
+import { useServerAction } from "@/hooks/use-server-action";
 import { addToCart } from "@/server/cart/actions/add-to-cart";
 import { Button } from "@/ui/shadcn/button";
 

@@ -126,13 +126,13 @@ describe("ProductListPage", () => {
     expect(screen.queryByTestId("group-order")).not.toBeInTheDocument();
   });
 
-  it("does not render the GroupOrder slot when there is no active cart role", async () => {
+  it("renders the GroupOrder slot when there is no active cart role", async () => {
     mockedGetCartCount.mockResolvedValueOnce(0);
     mockedgetAllProducts.mockResolvedValueOnce([]);
     mockedgetActiveCartRole.mockResolvedValueOnce(null);
 
     await renderPage();
 
-    expect(screen.queryByTestId("group-order")).not.toBeInTheDocument();
+    expect(screen.getByTestId("group-order")).toBeInTheDocument();
   });
 });

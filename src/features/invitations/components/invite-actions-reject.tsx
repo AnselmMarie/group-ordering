@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 
-import { useServerAction } from "@/lib/hooks/use-server-action";
+import { useServerAction } from "@/hooks/use-server-action";
 import { Button } from "@/ui/shadcn/button";
 import { rejectInvitation } from "@/server/invitations/actions/reject-invitation";
 

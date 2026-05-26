@@ -6,7 +6,7 @@ import { Header } from "./header";
 describe("Header", () => {
   it("renders the brand text", () => {
     render(<Header groupOrder={<div />} miniCart={<div />} />);
-    expect(screen.getByText("GroupOrder")).toBeInTheDocument();
+    expect(screen.getByText("Seafood Shack")).toBeInTheDocument();
   });
 
   it("renders the groupOrder slot", () => {

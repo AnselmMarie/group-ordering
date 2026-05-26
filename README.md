@@ -1,36 +1,95 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Group Ordering Coding Assignment
+
+For this coding assignment, I created a Seafood Shack group ordering application that satisfies all requested requirements while also adding a few additional features. Hosts can track invited participants and monitor their current order status throughout the ordering flow.
 
 ## Getting Started
 
-First, run the development server:
+There are two ways to use the application:
+
+### Deployed:
+
+Click on this [link](https://group-ordering.vercel.app/) to access the deployed app.
+
+No environment variables are required for the hosted version.
+
+or
+
+### Local:
+
+Create a `.env` file and follow the values provided in `.env.example`. Some of the values you will need to create or modify.
+
+Then run the development server:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+  pnpm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Database Access
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+You should have received credentials for the Neon database instance. Feel free to add or remove data as needed during review.
 
-## Learn More
+This temporary account will be removed after the review period.
 
-To learn more about Next.js, take a look at the following resources:
+## Tech Stack
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Frontend:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- Next.js
+- React
+- TanStack Form
 
-## Deploy on Vercel
+Backend:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Node.js BFF
+- Better Auth
+- Resend
+- React Email
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Database:
+
+- PostgreSQL (Neon)
+- Drizzle ORM
+
+Styling:
+
+- Tailwind
+- Shadcn/ui
+
+Tooling & Validation:
+
+- Vitest
+- Testing Library
+- Zod
+
+## Architecture / Design Decisions
+
+### Folder Structure
+
+I used a feature-oriented structure while aligning with common Next.js conventions. My goal was to keep related business logic, UI components, and server functionality grouped together to improve maintainability and scalability.
+
+### Database
+
+I chose PostgreSQL and Neon because it provides a reliable relational database with a strong serverless developer experience.
+
+Because of Drizzle's fast perfomance and strong TypeScript support I chose it for this application.
+
+### Authentication
+
+Better Auth was used to simplify the anonymous experience through authentication that could lead to an easy sign up experience.
+
+## Using AI
+
+I used AI during this coding assignment to quickly help build out a prototype so I could validate that I was moving in the right direction early in development.
+
+While using AI, I relied on my engineering knowledge and experience to guide the overall architecture, implementation, and decision-making process. I manually adjusted the code where needed while using AI for tasks like unit tests, repetitive code, and accelerating development workflows.
+
+## If I Had More Time
+
+- Refactor more files into smaller, more focused modules.
+- Adding WebSocket support so the host can receive real-time cart updates.
+- Create additional logic handling for more edge cases and failure scenarios.
+  (eg: When a session fails then automatically sign the user out and re-authenticating them. Display a toast if any cart data could not be recovered.)
+- Add loading states like skeleton loading.
+- Small but clean up the import order with ESLint.

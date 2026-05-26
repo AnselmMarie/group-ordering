@@ -6,11 +6,7 @@ export const InvitationStatus = async () => {
   const inviteStatus = await getInvitationsByCartId();
 
   if (!inviteStatus || inviteStatus.length === 0) {
-    return (
-      <p className="text-sm text-zinc-500 dark:text-zinc-400">
-        You didn't invite anyone yet.
-      </p>
-    );
+    return null;
   }
 
   return (
