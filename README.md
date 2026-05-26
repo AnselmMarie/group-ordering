@@ -87,6 +87,10 @@ Because of Drizzle's fast perfomance and strong TypeScript support I chose it fo
 
 Better Auth was used to simplify the anonymous experience through authentication that could lead to an easy sign up experience.
 
+### Vercel
+
+Using Vercel to deploy the application makes it easier for others to test the project without needing to go through additional local setup steps if they’re short on time.
+
 ## Using AI
 
 I used AI during this coding assignment to quickly help build out a prototype so I could validate that I was moving in the right direction early in development.
