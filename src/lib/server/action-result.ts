@@ -9,6 +9,19 @@ export class UserFacingError extends Error {
   }
 }
 
+const DEFAULT_FALLBACK_MESSAGE = "Something went wrong";
+
+/**
+ * Resolves a safe, user-displayable message from an unknown error.
+ *
+ * Only `UserFacingError` messages are trusted for display; anything else
+ * collapses to `fallback` so internal/diagnostic details never leak to users.
+ */
+export const toUserFacingMessage = (
+  err: unknown,
+  fallback: string = DEFAULT_FALLBACK_MESSAGE,
+): string => (err instanceof UserFacingError ? err.message : fallback);
+
 const FRAMEWORK_DIGEST_PREFIXES = ["NEXT_REDIRECT", "NEXT_HTTP_ERROR_FALLBACK"];
 
 const isFrameworkThrow = (err: unknown): boolean => {
@@ -30,9 +43,7 @@ export const withActionResult = <Args extends unknown[], T>(
       if (isFrameworkThrow(err)) throw err;
 
       console.error(`[action:${name}] failed`, err);
-      const error =
-        err instanceof UserFacingError ? err.message : "Something went wrong";
-      return { ok: false, error };
+      return { ok: false, error: toUserFacingMessage(err) };
     }
   };
 };

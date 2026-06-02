@@ -33,7 +33,7 @@ export const createInvitation = async ({
   });
 
   if (!row) {
-    throw new Error("Failed to create invitation.");
+    throw new UserFacingError("Failed to create invitation.");
   }
 
   // @todo: enhancement to just revalidate the invite server calls
