@@ -1,10 +1,11 @@
 import { render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+import { UserFacingError } from "@/lib/server/action-result";
 import { getCartCount } from "@/server/cart/repository/get-cart-count";
 import { getActiveCartRole } from "@/server/cart/repository/get-active-cart-role";
 import { createMockProduct } from "@/server/product/mock-data/mock-product";
-import { getAllProducts } from "@/server/product/repository/get-all-products";
+import { fetchAllProducts } from "@/server/product/fetch-all-products";
 
 import ProductListPage from "./product-list-page";
 
@@ -14,8 +15,8 @@ vi.mock("@/server/cart/repository/get-cart-count", () => ({
 vi.mock("@/server/cart/repository/get-active-cart-role", () => ({
   getActiveCartRole: vi.fn(),
 }));
-vi.mock("@/server/product/repository/get-all-products", () => ({
-  getAllProducts: vi.fn(),
+vi.mock("@/server/product/fetch-all-products", () => ({
+  fetchAllProducts: vi.fn(),
 }));
 
 vi.mock("@/features/cart/components/mini-cart", () => ({
@@ -35,6 +36,11 @@ vi.mock("@/features/invitations/components/group-order", () => ({
 vi.mock("@/features/products/components/product-card", () => ({
   ProductCard: ({ product }: { product: { id: string; title: string } }) => (
     <div data-testid="product-card">{product.title}</div>
+  ),
+}));
+vi.mock("@/features/products/components/products-error", () => ({
+  ProductsError: ({ message }: { message: string }) => (
+    <div data-testid="products-error">{message}</div>
   ),
 }));
 vi.mock("@/ui/components/header", () => ({
@@ -62,7 +68,7 @@ vi.mock("@/ui/components/layout/body", () => ({
 
 const mockedGetCartCount = vi.mocked(getCartCount);
 const mockedgetActiveCartRole = vi.mocked(getActiveCartRole);
-const mockedgetAllProducts = vi.mocked(getAllProducts);
+const mockedFetchAllProducts = vi.mocked(fetchAllProducts);
 
 const renderPage = async () => render(await ProductListPage());
 
@@ -73,7 +79,7 @@ describe("ProductListPage", () => {
 
   it("renders one ProductCard per product", async () => {
     mockedGetCartCount.mockResolvedValueOnce(0);
-    mockedgetAllProducts.mockResolvedValueOnce([
+    mockedFetchAllProducts.mockResolvedValueOnce([
       createMockProduct({ id: "p-1", title: "Latte" }),
       createMockProduct({ id: "p-2", title: "Mocha" }),
       createMockProduct({ id: "p-3", title: "Drip" }),
@@ -90,7 +96,7 @@ describe("ProductListPage", () => {
 
   it("forwards the cart count to MiniCart", async () => {
     mockedGetCartCount.mockResolvedValueOnce(7);
-    mockedgetAllProducts.mockResolvedValueOnce([]);
+    mockedFetchAllProducts.mockResolvedValueOnce([]);
     mockedgetActiveCartRole.mockResolvedValueOnce(null);
 
     await renderPage();
@@ -100,7 +106,7 @@ describe("ProductListPage", () => {
 
   it("renders the GroupOrder slot when the user is the cart owner", async () => {
     mockedGetCartCount.mockResolvedValueOnce(0);
-    mockedgetAllProducts.mockResolvedValueOnce([]);
+    mockedFetchAllProducts.mockResolvedValueOnce([]);
     mockedgetActiveCartRole.mockResolvedValueOnce({
       role: "owner",
       cartId: "cart-1",
@@ -114,7 +120,7 @@ describe("ProductListPage", () => {
 
   it("does not render the GroupOrder slot when the user is an editor", async () => {
     mockedGetCartCount.mockResolvedValueOnce(0);
-    mockedgetAllProducts.mockResolvedValueOnce([]);
+    mockedFetchAllProducts.mockResolvedValueOnce([]);
     mockedgetActiveCartRole.mockResolvedValueOnce({
       role: "editor",
       cartId: "cart-1",
@@ -128,11 +134,43 @@ describe("ProductListPage", () => {
 
   it("renders the GroupOrder slot when there is no active cart role", async () => {
     mockedGetCartCount.mockResolvedValueOnce(0);
-    mockedgetAllProducts.mockResolvedValueOnce([]);
+    mockedFetchAllProducts.mockResolvedValueOnce([]);
     mockedgetActiveCartRole.mockResolvedValueOnce(null);
 
     await renderPage();
 
     expect(screen.getByTestId("group-order")).toBeInTheDocument();
+  });
+
+  it("renders the user-facing message when the products fetch fails", async () => {
+    mockedGetCartCount.mockResolvedValueOnce(3);
+    mockedFetchAllProducts.mockRejectedValueOnce(
+      new UserFacingError("You're going a little fast. Please wait a moment."),
+    );
+    mockedgetActiveCartRole.mockResolvedValueOnce(null);
+
+    await renderPage();
+
+    expect(screen.getByTestId("products-error")).toHaveTextContent(
+      "You're going a little fast. Please wait a moment.",
+    );
+    expect(screen.queryByTestId("product-card")).not.toBeInTheDocument();
+    // The rest of the page survives the products failure.
+    expect(screen.getByTestId("mini-cart")).toHaveTextContent("cart-count:3");
+    expect(screen.getByTestId("group-order")).toBeInTheDocument();
+  });
+
+  it("shows a generic fallback when a non-user-facing error is thrown", async () => {
+    mockedGetCartCount.mockResolvedValueOnce(0);
+    mockedFetchAllProducts.mockRejectedValueOnce(new Error("socket hang up"));
+    mockedgetActiveCartRole.mockResolvedValueOnce(null);
+
+    await renderPage();
+
+    const errorEl = screen.getByTestId("products-error");
+    expect(errorEl).toHaveTextContent(
+      "We couldn't load the menu right now. Please try again.",
+    );
+    expect(errorEl).not.toHaveTextContent("socket hang up");
   });
 });
